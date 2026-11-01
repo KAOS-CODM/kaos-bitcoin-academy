@@ -1,8 +1,25 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+
+# Local secrets and environment overrides
 .env
 .env.*
 !.env.example
+
+# Logs and test coverage
 *.log
-.DS_Store
 coverage/
+
+# TypeScript, Vite and local tool caches
+*.tsbuildinfo
+.vite/
+.cache/
+
+# OS and editor metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
