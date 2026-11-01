@@ -1,0 +1,41 @@
+PRD INTEGRITY RECORD
+
+Document: PRD.md
+Algorithm: SHA-256
+SHA-256: 1e73e32cd99629099ee143ff5377555296c20fb4489263c3c57c3a25dc50c23d
+Verified on: October 30, 2026
+File size at verification: 28170 bytes
+
+Reference document: PRD-ORIGINAL.txt
+Reference SHA-256: 7a44c87ea4eba3bf1e13a89baa402515d67bbb707fd4c181046b32b8cd86eaed
+Reference size: 28031 bytes
+
+Pre-restoration match
+Before the authorized restoration, PRD.md and PRD-ORIGINAL.txt were verified
+byte-identical, both hashing to:
+  7a44c87ea4eba3bf1e13a89baa402515d67bbb707fd4c181046b32b8cd86eaed
+
+Subsequent authorized modification
+The "Final authority" section was subsequently appended to PRD.md under the
+project owner's explicit approval. It was the only change: six lines were
+added at the end of the document, and no existing content, heading, table or
+ordering was rewritten or reformatted.
+
+Because of that authorized change, PRD.md and PRD-ORIGINAL.txt are NOT
+byte-identical. They currently differ by exactly that appended section, and
+their hashes differ accordingly. PRD.md is the authoritative document;
+PRD-ORIGINAL.txt remains the preserved reference copy of the original
+Markdown content.
+
+Policy
+- PRD.md is the sole authoritative Product Requirements Document.
+- The checksum must be recalculated and verified after any explicitly
+  authorized modification to PRD.md, and this record updated to match.
+- A checksum mismatch must be reported to the project owner. The PRD is never
+  automatically repaired, regenerated or overwritten on the basis of a
+  checksum mismatch.
+- If PRD.md and PRD-ORIGINAL.txt diverge, PRD.md governs and the discrepancy
+  is reported; neither file is automatically reconciled.
+
+Verification command
+sha256sum PRD.md PRD-ORIGINAL.txt

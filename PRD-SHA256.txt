@@ -1,0 +1,36 @@
+PRD INTEGRITY RECORD - HISTORICAL, SUPERSEDED
+
+Status: ARCHIVED. This record is retained for historical traceability only.
+"PRD.txt" is archived and is NO LONGER the authoritative PRD.
+
+Current authoritative PRD: PRD.md
+See PRD-MD-SHA256.txt for the current integrity record.
+
+Do not use the checksum below as the checksum of PRD.md. It is the checksum
+of the archived PRD.txt only.
+
+Document: PRD.txt
+Algorithm: SHA-256
+SHA-256: 80f7f293030ec9cb8429811b74233d1906500c11b47c9a214a6521db3884d873
+Verified on: October 30, 2026
+File size at verification: 28025 bytes
+
+History
+This file originally recorded the integrity checksum of PRD.txt when PRD.txt
+was treated as the authoritative source of truth during project
+initialization. Authority has since moved to PRD.md, and this record was
+retitled as a historical record by explicit project-owner approval.
+
+The checksum value and the original verification date above are preserved
+unchanged from the original record.
+
+Policy
+- PRD.txt is preserved unchanged and is not authoritative.
+- PRD.txt is never edited, overwritten, renamed, deleted or reformatted,
+  including for the purpose of marking it as archived.
+- The current authority is PRD.md, recorded in PRD-MD-SHA256.txt.
+- A checksum mismatch in an archived document must be reported and is never
+  automatically repaired or overwritten.
+
+Verification command (archived document)
+sha256sum PRD.txt
