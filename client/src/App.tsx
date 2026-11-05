@@ -5,6 +5,7 @@ import { Home } from './pages/Home'
 import { Catalogue } from './pages/Catalogue'
 import { CourseDetail } from './pages/CourseDetail'
 import { Lesson } from './pages/Lesson'
+import { Quiz } from './pages/Quiz'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { Dashboard } from './pages/Dashboard'
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="courses" element={<Catalogue />} />
         <Route path="courses/:slug" element={<CourseDetail />} />
         <Route path="lessons/:slug" element={<Lesson />} />
+        <Route path="quizzes/:slug" element={<Quiz />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route

@@ -1,7 +1,21 @@
 import mongoose from 'mongoose'
+import {
+  configureMongoDns,
+  createMongoLookup,
+  createMongoResolver,
+  deriveMongoDnsScope,
+} from './lib/dns.js'
 import { logger } from './logger.js'
 
 export async function connectDatabase(uri: string, dbName: string): Promise<void> {
+  configureMongoDns()
+
+  const dnsScope = deriveMongoDnsScope(uri)
+  const lookup =
+    dnsScope.host || dnsScope.domain
+      ? createMongoLookup(createMongoResolver(), dnsScope)
+      : undefined
+
   mongoose.set('strictQuery', true)
   await mongoose.connect(uri, {
     dbName,
@@ -9,6 +23,7 @@ export async function connectDatabase(uri: string, dbName: string): Promise<void
     minPoolSize: 0,
     serverSelectionTimeoutMS: 8000,
     socketTimeoutMS: 45000,
+    ...(lookup ? { lookup } : {}),
   })
   logger.info({ db: dbName }, 'database connected')
 }
@@ -30,10 +45,20 @@ export async function ensureIndexes(): Promise<void> {
   const { CourseModel } = await import('./models/Course.js')
   const { LessonModel } = await import('./models/Lesson.js')
   const { ProgressModel } = await import('./models/Progress.js')
+  const { QuizModel } = await import('./models/Quiz.js')
+  const { QuizAttemptModel } = await import('./models/QuizAttempt.js')
+  const { XpEventModel } = await import('./models/XpEvent.js')
+  const { AchievementModel } = await import('./models/Achievement.js')
+  const { UserAchievementModel } = await import('./models/UserAchievement.js')
   await Promise.all([
     UserModel.createIndexes(),
     CourseModel.createIndexes(),
     LessonModel.createIndexes(),
     ProgressModel.createIndexes(),
+    QuizModel.createIndexes(),
+    QuizAttemptModel.createIndexes(),
+    XpEventModel.createIndexes(),
+    AchievementModel.createIndexes(),
+    UserAchievementModel.createIndexes(),
   ])
 }

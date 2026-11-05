@@ -1,12 +1,18 @@
 import { CourseModel } from '../models/Course.js'
 import { LessonModel } from '../models/Lesson.js'
-import { courseBundles, validateContent } from '../content/index.js'
+import { QuizModel } from '../models/Quiz.js'
+import { AchievementModel } from '../models/Achievement.js'
+import { achievements, courseBundles, quizzes, validateContent } from '../content/index.js'
 
 export interface SeedResult {
   seededCourses: number
   seededLessons: number
+  seededQuizzes: number
+  seededAchievements: number
   storedCourses: number
   storedLessons: number
+  storedQuizzes: number
+  storedAchievements: number
   previewLessons: number
 }
 
@@ -67,11 +73,75 @@ export async function seedContent(): Promise<SeedResult> {
     }
   }
 
-  const [storedCourses, storedLessons, distinctLessonSlugs, previewLessons] = await Promise.all([
+  for (const quiz of quizzes) {
+    const update: Record<string, unknown> = {
+      $set: {
+        slug: quiz.slug,
+        kind: quiz.kind,
+        courseSlug: quiz.courseSlug,
+        title: quiz.title,
+        passingScore: quiz.passingScore,
+        status: 'published',
+        version: 1,
+        questions: quiz.questions,
+      },
+    }
+    if (quiz.kind === 'lesson' && quiz.lessonSlug) {
+      ;(update.$set as Record<string, unknown>).lessonSlug = quiz.lessonSlug
+    } else {
+      update.$unset = { lessonSlug: '' }
+    }
+
+    await QuizModel.findOneAndUpdate({ slug: quiz.slug }, update, {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+      runValidators: true,
+    })
+  }
+
+  await QuizModel.updateMany(
+    { slug: { $nin: quizzes.map((quiz) => quiz.slug) } },
+    { $set: { status: 'draft' } },
+  )
+
+  for (const achievement of achievements) {
+    await AchievementModel.findOneAndUpdate(
+      { slug: achievement.slug },
+      {
+        $set: {
+          slug: achievement.slug,
+          title: achievement.title,
+          description: achievement.description,
+          order: achievement.order,
+          status: 'published',
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true, runValidators: true },
+    )
+  }
+
+  const [
+    storedCourses,
+    storedLessons,
+    distinctLessonSlugs,
+    previewLessons,
+    storedQuizzes,
+    publishedQuizzes,
+    storedAchievements,
+    publishedAuthoredAchievements,
+  ] = await Promise.all([
     CourseModel.countDocuments(),
     LessonModel.countDocuments(),
     LessonModel.distinct('slug').then((slugs) => slugs.length),
     LessonModel.countDocuments({ isPreview: true }),
+    QuizModel.countDocuments(),
+    QuizModel.countDocuments({ status: 'published' }),
+    AchievementModel.countDocuments(),
+    AchievementModel.countDocuments({
+      slug: { $in: achievements.map((achievement) => achievement.slug) },
+      status: 'published',
+    }),
   ])
 
   if (storedLessons !== distinctLessonSlugs) {
@@ -80,12 +150,24 @@ export async function seedContent(): Promise<SeedResult> {
   if (previewLessons !== 1) {
     throw new Error(`Expected exactly one preview lesson after seeding, found ${previewLessons}.`)
   }
+  if (publishedQuizzes !== 30) {
+    throw new Error(`Expected exactly 30 published quizzes after seeding, found ${publishedQuizzes}.`)
+  }
+  if (publishedAuthoredAchievements !== achievements.length) {
+    throw new Error(
+      `Expected all ${achievements.length} authored achievements to be published after seeding, found ${publishedAuthoredAchievements}.`,
+    )
+  }
 
   return {
     seededCourses: courseBundles.length,
     seededLessons: courseBundles.reduce((sum, bundle) => sum + bundle.lessons.length, 0),
+    seededQuizzes: quizzes.length,
+    seededAchievements: achievements.length,
     storedCourses,
     storedLessons,
+    storedQuizzes,
+    storedAchievements,
     previewLessons,
   }
 }

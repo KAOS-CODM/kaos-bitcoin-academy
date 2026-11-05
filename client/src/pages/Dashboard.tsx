@@ -41,7 +41,7 @@ export function Dashboard() {
     )
   }
 
-  const { overall, resume, courses, recent, isNewLearner } = dashboard.data
+  const { overall, resume, courses, recent, isNewLearner, xp, achievements } = dashboard.data
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
@@ -66,6 +66,9 @@ export function Dashboard() {
           <p className="mt-1 text-sm text-muted">
             {overall.completedLessons} of {overall.totalLessons} published lessons completed
           </p>
+          <p className="mt-1 text-sm text-muted">
+            {overall.coursesComplete} of {overall.coursesTotal} courses complete
+          </p>
           <div className="mt-5">
             <ProgressBar
               percent={overall.percent}
@@ -74,6 +77,7 @@ export function Dashboard() {
               label="All courses"
             />
           </div>
+          <p className="mt-5 text-sm font-semibold text-amber">{xp.total} XP earned</p>
         </section>
 
         <section className="rounded-lg border border-amber/40 bg-surface p-6">
@@ -82,22 +86,38 @@ export function Dashboard() {
           </h2>
           {resume ? (
             <>
-              <p className="mt-3 text-lg font-semibold text-parchment">{resume.lesson.title}</p>
+              <p className="mt-3 text-lg font-semibold text-parchment">
+                {resume.lesson ? resume.lesson.title : resume.assessment?.title}
+              </p>
               <p className="mt-1 text-sm text-muted">{resume.courseTitle}</p>
-              <Link
-                to={`/lessons/${resume.lesson.slug}`}
-                className="mt-5 inline-block rounded-md bg-amber px-4 py-2.5 text-sm font-semibold text-ink hover:bg-amber-soft"
-              >
-                {isNewLearner ? 'Begin the first lesson' : 'Continue where I stopped'}
-              </Link>
+              {resume.lesson ? (
+                <Link
+                  to={`/lessons/${resume.lesson.slug}`}
+                  className="mt-5 inline-block rounded-md bg-amber px-4 py-2.5 text-sm font-semibold text-ink hover:bg-amber-soft"
+                >
+                  {isNewLearner ? 'Begin the first lesson' : 'Continue where I stopped'}
+                </Link>
+              ) : resume.assessment ? (
+                <Link
+                  to={`/quizzes/${resume.assessment.slug}`}
+                  className="mt-5 inline-block rounded-md bg-amber px-4 py-2.5 text-sm font-semibold text-ink hover:bg-amber-soft"
+                >
+                  Take the course assessment
+                </Link>
+              ) : null}
+              {resume.lesson && resume.assessment && !resume.assessment.passed ? (
+                <p className="mt-3 text-sm text-muted">
+                  Course assessment also required: {resume.assessment.title}
+                </p>
+              ) : null}
             </>
           ) : (
             <>
               <p className="mt-3 text-lg font-semibold text-parchment">
-                Every published lesson is complete
+                Every course is complete
               </p>
               <p className="mt-1 text-sm text-muted">
-                More modules will be published as the academy grows.
+                You have finished every published lesson and passed every assessment.
               </p>
               <Link
                 to="/courses"
@@ -140,9 +160,16 @@ export function Dashboard() {
                   >
                     {course.progress.completedLessons === 0 ? 'Start' : 'Resume'}
                   </Link>
-                ) : (
+                ) : course.complete ? (
                   <span className="text-sm font-semibold text-amber">Complete</span>
-                )}
+                ) : course.assessment ? (
+                  <Link
+                    to={`/quizzes/${course.assessment.slug}`}
+                    className="rounded border border-amber/50 px-3 py-2 text-sm text-amber hover:border-amber"
+                  >
+                    Take assessment
+                  </Link>
+                ) : null}
               </div>
               <div className="mt-4">
                 <ProgressBar
@@ -157,10 +184,40 @@ export function Dashboard() {
                 <p className="mt-3 text-sm text-muted">
                   Next: <span className="text-parchment">{course.nextLesson.title}</span>
                 </p>
+              ) : course.assessment ? (
+                <p className="mt-3 text-sm text-muted">
+                  Assessment: {course.assessment.title} ·{' '}
+                  {course.assessment.passed
+                    ? 'passed'
+                    : course.assessment.attempts
+                      ? `best ${course.assessment.bestPercent ?? 0}%`
+                      : 'not attempted'}
+                </p>
               ) : null}
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="mb-4 text-xl font-semibold text-parchment">Achievements</h2>
+        {achievements.length === 0 ? (
+          <div className="rounded-lg border border-line bg-surface p-5">
+            <p className="text-sm text-muted">
+              Pass a lesson knowledge check to earn your first achievement.
+            </p>
+          </div>
+        ) : (
+          <ul className="grid gap-3 sm:grid-cols-3">
+            {achievements.map((achievement) => (
+              <li key={achievement.slug} className="rounded-lg border border-amber/40 bg-surface p-4">
+                <p className="font-semibold text-amber">{achievement.title}</p>
+                <p className="mt-1 text-sm leading-6 text-muted">{achievement.description}</p>
+                <p className="mt-2 text-xs text-muted">{formatDate(achievement.earnedAt)}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="mt-10">

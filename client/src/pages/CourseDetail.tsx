@@ -31,8 +31,13 @@ export function CourseDetail() {
     )
   }
 
-  const { course: info, modules, progress } = course.data
+  const { course: info, modules, progress, complete, assessment } = course.data
   const resumeSlug = progress.nextLessonSlug
+  const assessmentHref = assessment
+    ? user
+      ? `/quizzes/${assessment.slug}`
+      : `/login?next=${encodeURIComponent(`/quizzes/${assessment.slug}`)}`
+    : null
 
   const lessonHref = (lesson: LessonSummary) => {
     if (!user && !lesson.isPreview) {
@@ -77,8 +82,17 @@ export function CourseDetail() {
               >
                 {progress.completedLessons === 0 ? 'Start course' : 'Resume course'}
               </Link>
-            ) : (
+            ) : complete ? (
               <p className="text-sm font-semibold text-amber">Course complete</p>
+            ) : assessmentHref ? (
+              <Link
+                to={assessmentHref}
+                className="rounded-md bg-amber px-4 py-2.5 text-sm font-semibold text-ink hover:bg-amber-soft"
+              >
+                Take the course assessment
+              </Link>
+            ) : (
+              <p className="text-sm text-muted">All lessons completed.</p>
             )}
           </div>
         ) : (
@@ -95,6 +109,43 @@ export function CourseDetail() {
           </div>
         )}
       </div>
+
+      {assessment ? (
+        <section aria-labelledby="course-assessment" className="mt-8 rounded-lg border border-amber/40 bg-surface p-5 sm:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-widest text-amber">Required for completion</p>
+              <h2 id="course-assessment" className="mt-1 text-xl font-semibold text-parchment">
+                {assessment.title}
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-muted">
+                {assessment.questionCount} questions · {assessment.passingScore}% needed to pass
+              </p>
+              {user ? (
+                <p className="mt-2 text-sm text-muted">
+                  {assessment.passed
+                    ? `Passed${assessment.bestPercent !== null ? ` · best ${assessment.bestPercent}%` : ''}`
+                    : assessment.attempts
+                      ? `Not passed yet · best ${assessment.bestPercent ?? 0}%`
+                      : 'Not attempted yet'}
+                </p>
+              ) : (
+                <p className="mt-2 text-sm text-muted">
+                  Sign in to see your assessment status and submit answers.
+                </p>
+              )}
+            </div>
+            {assessmentHref ? (
+              <Link
+                to={assessmentHref}
+                className="rounded-md bg-amber px-4 py-2.5 text-sm font-semibold text-ink hover:bg-amber-soft"
+              >
+                {user ? (assessment.passed ? 'Review assessment' : 'Start assessment') : 'Sign in to take it'}
+              </Link>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       <div className="mt-10 space-y-8">
         {modules.map((module) => (

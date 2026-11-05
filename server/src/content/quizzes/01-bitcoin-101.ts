@@ -1,0 +1,358 @@
+import { q, type QuizSeed } from '../types.js'
+
+export const bitcoin101Quizzes: QuizSeed[] = [
+  {
+    slug: 'btc101-money-problem-check',
+    kind: 'lesson',
+    courseSlug: '01-bitcoin-101',
+    lessonSlug: 'btc101-money-problem',
+    title: 'Check: money and the problem Bitcoin addresses',
+    passingScore: 67,
+    questions: [
+      q(
+        'q1',
+        'Which three problems does the lesson name?',
+        [
+          'Purchasing power, movement and permission',
+          'Mining speed, wallet design and price charts',
+          'Anonymity, free money and guaranteed profit',
+        ],
+        0,
+        'The lesson names purchasing power, movement and permission as the three problems people discuss.',
+      ),
+      q(
+        'q2',
+        'How does the lesson describe Bitcoin?',
+        [
+          'A complete answer to every money problem',
+          'An attempt to address some problems, with real costs and limits',
+          'A company that controls global payments',
+        ],
+        1,
+        'Bitcoin is presented as an attempt to solve some problems, not a complete answer or a company.',
+      ),
+    ],
+  },
+  {
+    slug: 'btc101-what-is-bitcoin-check',
+    kind: 'lesson',
+    courseSlug: '01-bitcoin-101',
+    lessonSlug: 'btc101-what-is-bitcoin',
+    title: 'Check: what Bitcoin is',
+    passingScore: 67,
+    questions: [
+      q(
+        'q1',
+        'What does it mean to "have bitcoin"?',
+        [
+          'You own a physical coin stored in a vault',
+          'You own shares in a company called Bitcoin',
+          'You control the spending key',
+        ],
+        2,
+        'Bitcoin is a shared ledger. Holding bitcoin means controlling the key that can spend the recorded bitcoin.',
+      ),
+      q(
+        'q2',
+        'What is a node?',
+        [
+          'A computer that keeps a copy of the ledger and checks the rules',
+          'A company that approves every transaction',
+          'A wallet that only stores paper backups',
+        ],
+        0,
+        'A node keeps a copy of the Bitcoin ledger and checks transactions and blocks against the rules.',
+      ),
+    ],
+  },
+  {
+    slug: 'btc101-no-company-check',
+    kind: 'lesson',
+    courseSlug: '01-bitcoin-101',
+    lessonSlug: 'btc101-no-company',
+    title: 'Check: no company, no central office',
+    passingScore: 67,
+    questions: [
+      q(
+        'q1',
+        'What would be required to change the 21 million supply limit?',
+        [
+          'A single miner announcing the change',
+          'Widespread adoption of the new rule by the network',
+          'One developer editing the software',
+        ],
+        1,
+        'A rule change only takes effect if enough of the network adopts it; no single participant can impose it.',
+      ),
+      q(
+        'q2',
+        'Which statement matches the lesson?',
+        [
+          'Decentralisation protects every step around Bitcoin, including exchanges',
+          'Decentralisation means no one needs to manage keys',
+          'Decentralisation protects the ledger, but an exchange can still freeze your account',
+        ],
+        2,
+        'The network may resist censorship, but surrounding services and personal devices remain separate risks.',
+      ),
+    ],
+  },
+  {
+    slug: 'btc101-what-it-is-not-check',
+    kind: 'lesson',
+    courseSlug: '01-bitcoin-101',
+    lessonSlug: 'btc101-what-it-is-not',
+    title: 'Check: what Bitcoin is not',
+    passingScore: 67,
+    questions: [
+      q(
+        'q1',
+        'Why is Bitcoin not completely anonymous by default?',
+        [
+          'The ledger is public and transactions can often be linked to identities',
+          'Every address includes the owner\'s full name',
+          'All transactions are hidden from nodes',
+        ],
+        0,
+        'Addresses are pseudonymous, but the public ledger and exchange records can link activity to real identities.',
+      ),
+      q(
+        'q2',
+        'Which is a real limitation named in the lesson?',
+        [
+          'Bitcoin is always free to acquire',
+          'The base layer has limited transaction throughput',
+          'Its price is guaranteed to rise',
+        ],
+        1,
+        'Limited base-layer throughput is a design consequence, which is why fees rise when demand is high.',
+      ),
+    ],
+  },
+  {
+    slug: 'btc101-keys-check',
+    kind: 'lesson',
+    courseSlug: '01-bitcoin-101',
+    lessonSlug: 'btc101-keys',
+    title: 'Check: your keys, your coins',
+    passingScore: 67,
+    questions: [
+      q(
+        'q1',
+        'What is a seed phrase?',
+        [
+          'A public address safe to share with anyone',
+          'A password that support agents may request',
+          'A human-readable backup that can restore a wallet',
+        ],
+        2,
+        'A seed phrase is a backup of the wallet root secret. Anyone with it can restore and spend the wallet.',
+      ),
+      q(
+        'q2',
+        'What does custodial custody mean?',
+        [
+          'A company holds your keys',
+          'You hold the private keys yourself',
+          'The network holds your keys for you',
+        ],
+        0,
+        'With custodial custody, a service holds the keys and you depend on that service.',
+      ),
+    ],
+  },
+  {
+    slug: 'btc101-scams-check',
+    kind: 'lesson',
+    courseSlug: '01-bitcoin-101',
+    lessonSlug: 'btc101-scams',
+    title: 'Check: scams that target beginners',
+    passingScore: 67,
+    questions: [
+      q(
+        'q1',
+        'Which two warning signs does the lesson emphasize?',
+        [
+          'Low fees and fast confirmations',
+          'Urgency and secrecy',
+          'Public addresses and open-source code',
+        ],
+        1,
+        'Scams create urgency and ask for secrecy so you act before thinking or asking someone you trust.',
+      ),
+      q(
+        'q2',
+        'What should you assume about someone offering to recover lost bitcoin for a fee?',
+        [
+          'They can reverse any Bitcoin transaction',
+          'They work for the Bitcoin network',
+          'They are likely targeting you a second time',
+        ],
+        2,
+        'Bitcoin transactions are irreversible. A recovery offer after a loss is a common second scam.',
+      ),
+    ],
+  },
+  {
+    slug: 'btc101-what-you-can-do-check',
+    kind: 'lesson',
+    courseSlug: '01-bitcoin-101',
+    lessonSlug: 'btc101-what-you-can-do',
+    title: 'Check: what you can do with Bitcoin today',
+    passingScore: 67,
+    questions: [
+      q(
+        'q1',
+        'When is Bitcoin a poor fit for a payment?',
+        [
+          'When fees are high and the purchase is very small',
+          'When both sides can use the network and speed matters',
+          'When you are learning how digital ownership works',
+        ],
+        0,
+        'High fees can make small everyday purchases impractical; the lesson names this as a poor fit.',
+      ),
+      q(
+        'q2',
+        'What makes a first experiment safe?',
+        [
+          'Borrowing money to make the experiment meaningful',
+          'Using an amount you can afford to lose',
+          'Skipping the wallet backup to save time',
+        ],
+        1,
+        'A safe first experiment uses a small amount whose loss would be annoying but not harmful.',
+      ),
+    ],
+  },
+  {
+    slug: 'btc101-recap-check',
+    kind: 'lesson',
+    courseSlug: '01-bitcoin-101',
+    lessonSlug: 'btc101-recap',
+    title: 'Check: explain Bitcoin in your own words',
+    passingScore: 67,
+    questions: [
+      q(
+        'q1',
+        'Which set best matches the five core ideas?',
+        [
+          'Guaranteed profit, anonymity, fast blocks, company control, and free coins',
+          'Mining, price charts, wallets, exchanges, and leverage',
+          'Shared record, keys, no central company, real limits, and people-targeting scams',
+        ],
+        2,
+        'The recap lists the shared record, keys, decentralisation, limits, and social scams as the core ideas.',
+      ),
+      q(
+        'q2',
+        'What is a good response when someone asks a hard Bitcoin question you cannot answer?',
+        [
+          'Say you do not know yet and explain how you would find out',
+          'Invent a confident answer',
+          'Change the subject and recommend a coin',
+        ],
+        0,
+        'The lesson treats honest uncertainty plus a method for finding out as better than a confident guess.',
+      ),
+    ],
+  },
+  {
+    slug: 'btc101-assessment',
+    kind: 'course',
+    courseSlug: '01-bitcoin-101',
+    title: 'Bitcoin 101 assessment',
+    passingScore: 80,
+    questions: [
+      q(
+        'q1',
+        'A trader in one country sells to a customer in another. Different mobile-money providers add fees and delay the payment. Which problem from the course does this mainly illustrate?',
+        [
+          'The 21 million supply limit',
+          'The movement problem',
+          'The seed-phrase backup problem',
+        ],
+        1,
+        'The scenario is about cross-border movement, intermediaries and delays, which the course calls the movement problem.',
+        'A trader and customer use different payment networks across a border.',
+      ),
+      q(
+        'q2',
+        'Someone says, "I have bitcoin on an exchange." What is the most accurate description of their control?',
+        [
+          'They hold the private keys and can spend without the exchange',
+          'They own a physical coin that the exchange stores in a vault',
+          'The exchange holds the keys; the balance depends on it',
+        ],
+        2,
+        'A custodial exchange holds the keys. The customer sees a balance but does not control the bitcoin directly.',
+      ),
+      q(
+        'q3',
+        'A miner tries to create a block that issues more bitcoin than the rules allow. What happens?',
+        [
+          'Nodes reject the block because it breaks the supply rule',
+          'The miner can issue extra bitcoin because miners control the network',
+          'The extra bitcoin is automatically returned to users',
+        ],
+        0,
+        'Nodes check blocks against the rules and reject invalid ones, including blocks that break the supply limit.',
+      ),
+      q(
+        'q4',
+        'A public ledger shows an address receiving payments, and an exchange record links that address to a person. Which description fits?',
+        [
+          'The person is completely anonymous because addresses hide names',
+          'The person is pseudonymous, and activity can be linked',
+          'The person has lost control of their keys to the exchange',
+        ],
+        1,
+        'Bitcoin is pseudonymous, not anonymous. Public ledger data and exchange records can link addresses to identities.',
+      ),
+      q(
+        'q5',
+        'An exchange holding a learner\'s bitcoin closes unexpectedly. What does the course say the learner still controls?',
+        [
+          'The bitcoin, because the exchange only displays a balance',
+          'The network, because every customer runs a node',
+          'Nothing directly, because the exchange held the keys',
+        ],
+        2,
+        'With custodial custody, the service holds the keys. If it fails, the customer may lose access.',
+      ),
+      q(
+        'q6',
+        'A "support agent" asks for a 12-word seed phrase to secure a wallet. What is the correct response?',
+        [
+          'Never share it; legitimate support does not need it',
+          'Share it only if the agent provides a support ticket number',
+          'Share half the words first and the rest after verification',
+        ],
+        0,
+        'Anyone with the seed phrase can take the wallet. No legitimate support process requires it.',
+      ),
+      q(
+        'q7',
+        'A learner wants to practise sending bitcoin for the first time. Which approach matches the course?',
+        [
+          'Use rent money so the lesson feels serious',
+          'Use a small amount they can afford to lose',
+          'Skip backups because the amount is small',
+        ],
+        1,
+        'The course recommends starting small, with an amount whose loss would not be harmful, and learning each step.',
+      ),
+      q(
+        'q8',
+        'Which claim about the 21 million cap is correct?',
+        [
+          'A rising price, because supply can never increase',
+          'A stable local-currency price, because supply is fixed',
+          'Neither stable purchasing power nor stable price',
+        ],
+        2,
+        'A fixed supply is not the same as stable value. Demand and speculation can still move the price sharply.',
+      ),
+    ],
+  },
+]

@@ -7,6 +7,9 @@ import type {
   Dashboard,
   LessonDetail,
   MeResponse,
+  QuizAttemptResponse,
+  QuizResponse,
+  QuizResultsResponse,
   User,
 } from './types'
 
@@ -56,6 +59,46 @@ export function useDashboard(enabled: boolean) {
     queryFn: () => api<Dashboard>('/dashboard'),
     enabled,
     retry: shouldNotRetry,
+  })
+}
+
+export function useQuiz(slug: string | undefined) {
+  return useQuery({
+    queryKey: ['quiz', slug],
+    queryFn: () => api<QuizResponse>(`/quizzes/${encodeURIComponent(slug ?? '')}`),
+    enabled: Boolean(slug),
+    retry: shouldNotRetry,
+  })
+}
+
+export function useQuizResults(slug: string | undefined, enabled: boolean) {
+  return useQuery({
+    queryKey: ['quiz-results', slug],
+    queryFn: () => api<QuizResultsResponse>(`/quizzes/${encodeURIComponent(slug ?? '')}/results`),
+    enabled: Boolean(slug) && enabled,
+    retry: shouldNotRetry,
+  })
+}
+
+export function useSubmitQuizAttempt(slug: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: {
+      attemptKey: string
+      answers: Array<{ questionId: string; optionId: string }>
+    }) =>
+      api<QuizAttemptResponse>(`/quizzes/${encodeURIComponent(slug)}/attempts`, {
+        method: 'POST',
+        json: input,
+      }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['quiz', slug] })
+      void queryClient.invalidateQueries({ queryKey: ['quiz-results', slug] })
+      void queryClient.invalidateQueries({ queryKey: ['lesson'] })
+      void queryClient.invalidateQueries({ queryKey: ['course'] })
+      void queryClient.invalidateQueries({ queryKey: ['courses'] })
+      void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+    },
   })
 }
 

@@ -1,12 +1,14 @@
 import { Link, useParams } from 'react-router-dom'
 import { SectionRenderer } from '../components/SectionRenderer'
-import { useCompleteLesson, useLesson } from '../lib/queries'
+import { QuizRunner } from '../components/Quiz'
+import { useCompleteLesson, useLesson, useQuiz } from '../lib/queries'
 import { ApiError } from '../lib/api'
 
 export function Lesson() {
   const { slug } = useParams<{ slug: string }>()
   const lessonQuery = useLesson(slug)
   const complete = useCompleteLesson(slug ?? '')
+  const quizQuery = useQuiz(lessonQuery.data?.quiz?.slug)
 
   if (lessonQuery.isPending) {
     return (
@@ -77,7 +79,7 @@ export function Lesson() {
     )
   }
 
-  const { lesson, course, moduleTitle, navigation, viewer } = lessonQuery.data
+  const { lesson, course, moduleTitle, navigation, viewer, quiz } = lessonQuery.data
   const signedIn = viewer.authenticated
 
   const lessonHref = (target: { slug: string }) =>
@@ -162,6 +164,29 @@ export function Lesson() {
       <article className="mt-10">
         <SectionRenderer sections={lesson.sections} />
       </article>
+
+      {quiz ? (
+        quizQuery.isPending ? (
+          <div className="mt-10 rounded-lg border border-line bg-surface p-5" role="status">
+            <p className="text-sm text-muted">Loading the lesson check…</p>
+          </div>
+        ) : quizQuery.isError ? (
+          <div className="mt-10 rounded-lg border border-line bg-surface p-5">
+            <p className="text-sm text-muted">
+              The lesson check could not be loaded right now. You can still read the lesson and
+              mark it complete.
+            </p>
+          </div>
+        ) : quizQuery.data ? (
+          <QuizRunner
+            key={quizQuery.data.quiz.slug}
+            quiz={quizQuery.data.quiz}
+            authenticated={quizQuery.data.viewer.authenticated}
+            initialSummary={quizQuery.data.attemptSummary}
+            compact
+          />
+        ) : null
+      ) : null}
 
       <section className="mt-12 rounded-lg border border-line bg-surface p-5 sm:p-6">
         {signedIn ? (

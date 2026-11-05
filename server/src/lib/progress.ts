@@ -18,6 +18,18 @@ export function summarizeCourse(lessonSlugs: string[], completed: Set<string>): 
   return { totalLessons, completedLessons, percent, nextLessonSlug }
 }
 
+export function isCourseComplete(
+  totalPublishedLessons: number,
+  completedPublishedLessons: number,
+  assessmentPassed: boolean,
+): boolean {
+  return (
+    totalPublishedLessons > 0 &&
+    completedPublishedLessons === totalPublishedLessons &&
+    assessmentPassed === true
+  )
+}
+
 export interface OverallProgress {
   totalLessons: number
   completedLessons: number

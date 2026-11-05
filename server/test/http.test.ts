@@ -21,7 +21,13 @@ test('data routes degrade to a controlled 503 when the database is unavailable',
   t.after(() => server.close())
   const client = new TestClient(server.baseUrl)
 
-  for (const path of ['/api/courses', '/api/courses/01-bitcoin-101', '/api/dashboard']) {
+  for (const path of [
+    '/api/courses',
+    '/api/courses/01-bitcoin-101',
+    '/api/dashboard',
+    '/api/quizzes/btc101-what-is-bitcoin-check',
+    '/api/quizzes/btc101-what-is-bitcoin-check/results',
+  ]) {
     const response = await client.get(path)
     assert.equal(response.status, 503, path)
     const body = (await response.json()) as { error: { code: string; message: string } }
@@ -35,6 +41,12 @@ test('data routes degrade to a controlled 503 when the database is unavailable',
     displayName: 'Learner',
   })
   assert.equal(register.status, 503)
+
+  const quizAttempt = await client.postJson('/api/quizzes/btc101-what-is-bitcoin-check/attempts', {
+    attemptKey: '00000000-0000-4000-8000-000000000000',
+    answers: [{ questionId: 'q1', optionId: 'a' }],
+  })
+  assert.equal(quizAttempt.status, 503)
 })
 
 test('unknown API endpoints return a JSON 404, not the SPA', async (t) => {

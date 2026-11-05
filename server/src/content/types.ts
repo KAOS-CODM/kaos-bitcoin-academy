@@ -57,6 +57,65 @@ export interface CourseBundle {
   lessons: LessonSeed[]
 }
 
+export type QuizKind = 'lesson' | 'course'
+
+export interface QuizOptionSeed {
+  id: string
+  text: string
+}
+
+export interface QuizQuestionSeed {
+  id: string
+  prompt: string
+  scenario?: string
+  explanation: string
+  options: QuizOptionSeed[]
+  correctOptionId: string
+}
+
+export interface QuizSeed {
+  slug: string
+  kind: QuizKind
+  courseSlug: string
+  lessonSlug?: string
+  title: string
+  passingScore: number
+  questions: QuizQuestionSeed[]
+}
+
+export interface AchievementSeed {
+  slug: string
+  title: string
+  description: string
+  order: number
+}
+
+/**
+ * Authoring helper for a question with three or four options. Option IDs are
+ * stable letters (a, b, c, d) and the correct answer is supplied by index.
+ */
+export function q(
+  id: string,
+  prompt: string,
+  optionTexts: string[],
+  correctIndex: number,
+  explanation: string,
+  scenario?: string,
+): QuizQuestionSeed {
+  const options = optionTexts.map((text, index) => ({
+    id: String.fromCharCode(97 + index),
+    text,
+  }))
+  return {
+    id,
+    prompt,
+    ...(scenario ? { scenario } : {}),
+    explanation,
+    options,
+    correctOptionId: options[correctIndex]?.id ?? '',
+  }
+}
+
 // Authoring helpers: keep lesson source readable and consistent.
 
 export const p = (...paragraphs: string[]): LessonSection => ({

@@ -3,9 +3,13 @@ import { Types } from 'mongoose'
 import { CourseModel } from '../models/Course.js'
 import { LessonModel } from '../models/Lesson.js'
 import { ProgressModel } from '../models/Progress.js'
+import { QuizModel } from '../models/Quiz.js'
+import { QuizAttemptModel } from '../models/QuizAttempt.js'
 import { requireAuth, requireDb } from '../middleware/auth.js'
 import { notFound } from '../errors.js'
-import { summarizeCourse } from '../lib/progress.js'
+import { isCourseComplete, summarizeCourse } from '../lib/progress.js'
+import { evaluateCourseCompletion } from '../lib/rewards.js'
+import { logger } from '../logger.js'
 import { routeParam } from '../lib/http.js'
 
 function courseIdentifier(value: string): Record<string, unknown> {
@@ -49,13 +53,16 @@ progressRouter.get('/:courseId', requireDb, requireAuth, async (req, res) => {
   }
 
   // Ownership is enforced by the session-scoped userId filter, never by a client id.
-  const [lessons, records] = await Promise.all([
+  const [lessons, records, assessment] = await Promise.all([
     LessonModel.find({ courseSlug: course.slug, status: 'published' })
       .select('slug order')
       .sort({ order: 1 })
       .lean(),
     ProgressModel.find({ userId: req.session.userId, courseSlug: course.slug })
       .select('lessonSlug completedAt')
+      .lean(),
+    QuizModel.findOne({ courseSlug: course.slug, kind: 'course', status: 'published' })
+      .select('slug title passingScore questions')
       .lean(),
   ])
 
@@ -64,10 +71,30 @@ progressRouter.get('/:courseId', requireDb, requireAuth, async (req, res) => {
     lessons.map((lesson) => lesson.slug),
     completed,
   )
+  const assessmentPassed = assessment
+    ? Boolean(
+        await QuizAttemptModel.exists({
+          userId: req.session.userId,
+          quizId: assessment._id,
+          passed: true,
+        }),
+      )
+    : false
 
   res.json({
     courseSlug: course.slug,
     summary,
+    complete: isCourseComplete(summary.totalLessons, summary.completedLessons, assessmentPassed),
+    assessment: assessment
+      ? {
+          slug: assessment.slug,
+          title: assessment.title,
+          questionCount: assessment.questions.length,
+          passingScore: assessment.passingScore,
+          passed: assessmentPassed,
+          requiredForCompletion: true,
+        }
+      : null,
     completedLessons: records.map((record) => ({
       lessonSlug: record.lessonSlug,
       completedAt: record.completedAt,
@@ -127,11 +154,32 @@ progressRouter.post('/lessons/:lessonId/complete', requireDb, requireAuth, async
     new Set(records.map((record) => record.lessonSlug)),
   )
 
+  let completion = {
+    complete: false,
+    xpAwarded: 0,
+    totalXp: 0,
+    achievementsAwarded: [] as Array<{ slug: string; title: string }>,
+  }
+  try {
+    // The progress write above has committed. The assessment route also
+    // reconciles after its transaction commits, so at least one post-commit
+    // evaluation observes both the final lesson and the passed assessment.
+    completion = await evaluateCourseCompletion(userId, lesson.courseSlug)
+  } catch (error) {
+    // Lesson completion must remain valid even if reward bookkeeping is briefly
+    // unavailable; the unique reward keys let a later evaluation catch up safely.
+    logger.error({ err: error, userId, courseSlug: lesson.courseSlug }, 'course completion evaluation failed')
+  }
+
   res.status(existing ? 200 : 201).json({
     completed: true,
     alreadyCompleted: Boolean(existing),
     lessonSlug: lesson.slug,
     courseSlug: lesson.courseSlug,
     summary,
+    complete: completion.complete,
+    xpAwarded: completion.xpAwarded,
+    totalXp: completion.totalXp,
+    achievementsAwarded: completion.achievementsAwarded,
   })
 })
