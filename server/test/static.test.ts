@@ -12,7 +12,18 @@ test('production build serves the SPA and its client-side routes', { skip: !buil
   const server = await startTestServer({ clientDist: config.clientDist })
   t.after(() => server.close())
 
-  for (const route of ['/', '/courses', '/dashboard']) {
+  for (const route of [
+    '/',
+    '/courses',
+    '/dashboard',
+    '/playground',
+    '/playground/wallet-creation',
+    '/playground/key-relationships',
+    '/playground/transaction-construction',
+    '/playground/broadcasting',
+    '/playground/block-formation',
+    '/playground/mining',
+  ]) {
     const response = await fetch(`${server.baseUrl}${route}`)
     assert.equal(response.status, 200, route)
     assert.match(response.headers.get('content-type') ?? '', /text\/html/)
