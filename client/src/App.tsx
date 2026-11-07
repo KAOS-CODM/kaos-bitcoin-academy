@@ -9,6 +9,8 @@ import { Quiz } from './pages/Quiz'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { Dashboard } from './pages/Dashboard'
+import { Playground } from './pages/Playground'
+import { PlaygroundSimulation } from './pages/PlaygroundSimulation'
 import { NotFound } from './pages/NotFound'
 
 export default function App() {
@@ -20,6 +22,8 @@ export default function App() {
         <Route path="courses/:slug" element={<CourseDetail />} />
         <Route path="lessons/:slug" element={<Lesson />} />
         <Route path="quizzes/:slug" element={<Quiz />} />
+        <Route path="playground" element={<Playground />} />
+        <Route path="playground/:simulationId" element={<PlaygroundSimulation />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route

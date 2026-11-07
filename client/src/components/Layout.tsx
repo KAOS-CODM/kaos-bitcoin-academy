@@ -46,6 +46,12 @@ export function Layout() {
             >
               Courses
             </Link>
+            <Link
+              to="/playground"
+              className="rounded px-3 py-2 text-muted transition hover:text-parchment"
+            >
+              Playground
+            </Link>
 
             {!isLoading && user ? (
               <>
