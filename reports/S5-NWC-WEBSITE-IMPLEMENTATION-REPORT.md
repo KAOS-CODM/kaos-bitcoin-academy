@@ -5,7 +5,7 @@
 **Repository:** `kaos-bitcoin-academy`
 **Branch:** `main`
 **Baseline HEAD:** `f99c1a5477050e54cd77a58520423bd2b1cd332b`
-**Commit handling:** Single owner-authorized S5 commit; not pushed.
+**Commit handling:** Owner-authorized S5 commits; not pushed.
 **Report location:** `reports/S5-NWC-WEBSITE-IMPLEMENTATION-REPORT.md`
 
 ## 1. Executive summary
@@ -40,6 +40,19 @@ the page.
 
 No additional NWC method was called. The method descriptions are display copy only.
 
+The wallet page also includes a **Where to get an NWC connection** section before the
+connection form. It gives two tested examples:
+
+- Coinos as the wallet, using `wss://relay.coinos.io`.
+- ZEUS as the wallet, using `wss://relay.getalby.com/v1`. Alby is the relay service, not the
+  wallet provider.
+
+The section links to each wallet's website, shows the approved relay address, and states that
+these are two tested examples rather than a complete compatibility list. It also adds
+learner-facing safety guidance: create a fresh URI, use an approved relay, protect the URI as
+a sensitive credential, never enter a seed phrase or private key, and remember that the
+connection is optional. This documentation/UX change does not alter the NWC implementation.
+
 The learning flow changes do not gate courses, lessons, quizzes, XP, achievements, the
 Bitcoin Playground, or the AI Tutor behind a wallet connection.
 
@@ -53,7 +66,8 @@ These are two tested wallet/relay combinations, not proof of universal wallet co
 The owner also confirmed that the revised wallet flow works. The implementation agent did not
 perform these live tests. No payment, invoice, balance, or settlement operation was tested.
 A successful `get_info` response does not prove payment or settlement functionality, and
-AC-016 is not fully proven by this work.
+AC-016 is not fully proven by this work. No new live wallet test was performed for the
+setup-guidance change described in this report.
 
 ## 2. Approved scope and boundaries
 
@@ -72,6 +86,10 @@ The implementation followed the approved S5 scope:
   for recognised method names and the original name for unknown methods.
 - Distinguish reported capabilities from methods the Academy has called, tested, or supports.
 - Handle empty or missing method lists gracefully.
+- Add learner-facing guidance for obtaining an NWC URI from the two tested wallet/relay
+  examples, with clickable wallet websites and explicit wallet-versus-relay wording.
+- Keep the guidance informational: no new provider integration, relay endpoint, route, or NWC
+  method.
 - Protected `/wallet` page consistent with existing routing, authentication, and styling.
 - Add a contextual practical activity to the relevant existing lesson.
 - Move the Wallet discovery point out of ordinary top-level navigation while preserving
@@ -107,19 +125,19 @@ fb931e34b8369f55e8f6d27eefbc5adc1936e66c65c53b64ef2dff3844cffc93  reports/S5-NWC
 | `client/src/features/wallet/methods.ts` | Display-only descriptions for the nine named NWC methods; unknown names return no description |
 | `client/src/features/wallet/WalletActivityCallout.tsx` | New lesson callout explaining why, what, and after, with a link to `/wallet` |
 | `client/src/features/wallet/WalletMethods.tsx` | New presentational section separating the method used by the Academy from methods reported by the wallet, with the capability disclosure |
-| `client/src/pages/Wallet.tsx` | Provider-neutral relay instructions, approved-relay section, both relays, method-awareness section, and a link back to the lesson |
+| `client/src/pages/Wallet.tsx` | Provider-neutral relay instructions, approved-relay section, both relays, method-awareness section, a **Where to get an NWC connection** section with Coinos/ZEUS examples and safety guidance, and a link back to the lesson |
 | `client/src/pages/Lesson.tsx` | Renders the practical activity on `ln-channels` only |
 | `client/src/components/Layout.tsx` | Wallet removed from ordinary authenticated top-level navigation; the file now matches baseline, so there is no net diff |
 | `client/src/App.tsx` | Keeps the protected `/wallet` route |
 | `server/src/app.ts` | Production `connect-src` now includes both exact relay origins |
-| `server/test/wallet.test.ts` | Focused NWC tests updated to 15 tests, including Alby, sanitisation, security, and learning-flow checks |
-| `server/test/wallet-methods.test.ts` | New focused tests for method descriptions and the used-versus-reported distinction (3 tests) |
-| `server/test/static.test.ts` | Built-bundle checks updated for both relays, the lesson activity copy, and the method-awareness copy |
+| `server/test/wallet.test.ts` | Focused NWC tests updated to 15 tests, including Alby, sanitisation, security, learning-flow, and wallet setup-guidance checks |
+| `server/test/wallet-methods.test.ts` | Focused tests for method descriptions and the used-versus-reported distinction (3 tests) |
+| `server/test/static.test.ts` | Built-bundle checks updated for both relays, the lesson activity copy, method-awareness copy, and the new wallet setup guidance |
 | `reports/S5-NWC-WEBSITE-IMPLEMENTATION-REPORT.md` | This report |
 
 The root `package-lock.json`, `reports/S5-NWC-LOCAL-VALIDATION-REPORT.md`, and `tools/`
 were already present as untracked files before this implementation. They were not modified
-by this task and are not included in the S5 commit.
+by this task and are not included in the S5 commits.
 
 No PRD file, server API route, database model, deployment setting, playground file, or AI
 Tutor file was modified.
@@ -349,7 +367,16 @@ The protected `/wallet` page provides:
   tested by the Academy, and do not imply Academy support. The page does not present them as
   permissions.
 - Reported extensions, with the capability caveat.
-- Instructions for obtaining a fresh NWC URI from a compatible wallet.
+- A **Where to get an NWC connection** section immediately before the connection form.
+- Two clickable examples: Coinos at `https://coinos.io` with `wss://relay.coinos.io`, and
+  ZEUS at `https://zeusln.com` with `wss://relay.getalby.com/v1`.
+- Explicit wallet-versus-relay wording: Coinos and ZEUS are wallets; Alby is the relay service
+  used in the ZEUS test.
+- A statement that these are two tested examples, not a complete compatibility list.
+- A before-you-connect checklist covering a fresh URI, an approved relay, credential
+  protection, the seed-phrase/private-key warning, and the optional nature of connecting.
+- General wallet-setting wording rather than invented menu names or unverified navigation
+  steps.
 - A reminder to revoke the connection in the wallet when finished.
 - A clear link back to the lesson that introduced the activity.
 - Navigation back to the dashboard and courses.
@@ -415,6 +442,35 @@ operation:
 - No reported method is invoked. Only the existing `get_info` request and `close()` lifecycle
   call occur.
 
+### 6.5 Wallet setup guidance
+
+The wallet page now includes learner-facing guidance for obtaining an NWC connection URI.
+The section appears before the connection form and contains:
+
+- A short explanation that the wallet creates the credential and the relay is a message
+  service named inside the URI, not the wallet provider.
+- A **Coinos** example linking to `https://coinos.io`, identifying Coinos as the wallet,
+  showing the approved `wss://relay.coinos.io` relay, and recording that this wallet/relay
+  combination was previously tested with a successful live `get_info` connection.
+- A **ZEUS** example linking to `https://zeusln.com`, identifying ZEUS as the wallet, showing
+  the approved `wss://relay.getalby.com/v1` relay, and explicitly stating that Alby is the
+  relay service, not the wallet provider. It records the same previously successful live
+  `get_info` result.
+- A statement that these are two tested examples, not a complete list of compatible wallets.
+- General guidance to use the wallet's NWC or connected-apps settings and to expect menu names
+  to vary. No exact menu path or unverified navigation step is asserted.
+- A before-you-connect checklist:
+  - Generate a fresh NWC URI in the learner's own wallet.
+  - Select one of the Academy's two approved relays.
+  - Treat the URI as a sensitive credential and never share it publicly or paste it into
+    chats, screenshots, support requests, or reports.
+  - Never enter a wallet seed phrase or private key into the Academy.
+  - Remember that the wallet connection is optional and all educational content remains
+    available without it.
+
+This is an informational/UX change. It does not add a route, provider integration, relay
+endpoint, NWC method, or connection behavior.
+
 ## 7. Verification performed
 
 ### 7.1 Typechecks
@@ -476,8 +532,17 @@ The focused tests cover:
 - Only methods passed in the reported array are rendered.
 - Reported method names are escaped safely when rendered.
 - Empty and missing method lists render gracefully and sanitise to an empty list.
+- The wallet page contains the **Where to get an NWC connection** section.
+- The Coinos example links to `https://coinos.io` and shows `wss://relay.coinos.io`.
+- The ZEUS example links to `https://zeusln.com` and shows `wss://relay.getalby.com/v1`.
+- The page identifies Coinos and ZEUS as wallets and Alby as the relay service, not the wallet
+  provider.
+- The page states that the examples are tested but not exhaustive, and includes the fresh-URI,
+  credential-protection, seed-phrase/private-key, and optional-connection guidance.
+- The old wording that treated Coinos and Alby as wallet examples is absent.
 
 All test credentials were fake. The automated tests did not connect to a real wallet or relay.
+No live wallet test was performed for this documentation change.
 
 ### 7.3 Full server test suite
 
@@ -524,8 +589,8 @@ Client build output:
 
 ```text
 dist/index.html                   0.61 kB │ gzip:   0.36 kB
-dist/assets/index-0PhuKG0f.css   23.44 kB │ gzip:   5.04 kB
-dist/assets/index-CLF72GGD.js   541.43 kB │ gzip: 160.53 kB
+dist/assets/index-5LmkCAV3.css   23.45 kB │ gzip:   5.04 kB
+dist/assets/index-BH0Jys7E.js   544.35 kB │ gzip: 160.97 kB
 ```
 
 Vite emitted a non-fatal warning that the JavaScript chunk is larger than 500 kB. The build
@@ -548,6 +613,10 @@ Results:
 - Both approved relay URLs are present in the built client bundle.
 - The built bundle contains the activity copy, the used-versus-reported method headings, and
   the method descriptions.
+- The built bundle contains the **Where to get an NWC connection** heading, both wallet
+  website URLs, the wallet-versus-relay distinction, the tested-example limitation, and the
+  safety guidance.
+- No additional relay endpoint or wallet-provider integration was added.
 - No `nsec1...` value was found in client or server source/tests.
 - `git diff --check` reported no whitespace errors.
 - `PRD.md` SHA-256 remained unchanged.
@@ -573,6 +642,9 @@ wallet/relay combinations and do not establish universal wallet compatibility. N
 invoice, balance, or settlement operation was tested. The implementation agent did not perform
 these live tests, and the automated tests in sections 7.2-7.3 remain mocked rather than live.
 
+The setup-guidance change documented in section 6.5 did not perform a new live wallet
+connection test. It relies on the owner's earlier Coinos and ZEUS/Alby results recorded above.
+
 ## 8. Requirement mapping
 
 | Requirement | Status |
@@ -582,7 +654,11 @@ these live tests, and the automated tests in sections 7.2-7.3 remain mocked rath
 | NWC explanation and safety instructions | Implemented |
 | Password-style optional NWC URI input | Implemented |
 | Connect, status, wallet information, disconnect | Implemented |
-| Instructions for obtaining a URI | Implemented |
+| Learner-facing **Where to get an NWC connection** section | Implemented and statically checked |
+| Clickable Coinos and ZEUS examples with exact tested relays | Implemented and statically checked |
+| Wallet provider distinguished from relay service | Implemented and statically checked |
+| Fresh-URI, approved-relay, credential-protection, seed/private-key, and optional-connection guidance | Implemented and statically checked |
+| No new route, wallet-provider integration, relay endpoint, or NWC method | Confirmed |
 | Both approved relays documented on the page | Implemented |
 | No claim that every NWC-compatible wallet is supported | Implemented |
 | No claim that the academy stores or controls funds | Implemented |
@@ -593,6 +669,7 @@ these live tests, and the automated tests in sections 7.2-7.3 remain mocked rath
 | Owner live `get_info` with Coinos URI | Confirmed successful |
 | Owner live `get_info` with ZEUS-generated Alby URI | Confirmed successful |
 | Universal wallet compatibility | Not claimed; only two combinations tested |
+| New live test for the setup-guidance change | None performed; relies on the earlier owner tests |
 | Reject `wss://relay.getalby.com` without `/v1` | Implemented and tested |
 | Reject unexpected Alby paths | Implemented and tested |
 | Reject malformed, duplicate, unexpected, invalid, and unapproved URI parts | Implemented and tested |
@@ -623,7 +700,7 @@ these live tests, and the automated tests in sections 7.2-7.3 remain mocked rath
 | No playground or AI Tutor changes | Confirmed |
 | No PRD changes | Confirmed |
 | Report copied to Android reports directory and `cmp`-verified | Performed after final report correction; see section 10 |
-| Owner-authorized S5 commit | Included in one commit; no push |
+| Owner-authorized S5 commits | Two commits; no push |
 
 ## 9. Limitations and remaining verification
 
@@ -632,7 +709,8 @@ The following items remain outside the evidence produced here:
 1. **Live-test scope:** The owner performed two successful live `get_info` tests: a Coinos URI
    on `wss://relay.coinos.io` and a ZEUS-generated URI on `wss://relay.getalby.com/v1`. These
    are two tested wallet/relay combinations and do not prove universal wallet compatibility.
-   The implementation agent did not perform these live tests.
+   The implementation agent did not perform these live tests. The setup-guidance change did not
+   perform a new live test; it relies on these earlier results.
 2. **Only `get_info`:** No payment, invoice, balance, transaction, or settlement operation
    was implemented or tested. The methods returned by the wallet are reported capabilities,
    not verified functionality.
@@ -647,13 +725,15 @@ The following items remain outside the evidence produced here:
 6. **No browser automation:** The page logic and source were verified through DOM-free
    controller tests, static checks, React static-markup rendering of the method section, and
    the production bundle. No browser automation was run.
-7. **Database-backed S1 flow:** The full-suite log shows the DB-backed S1 test did not
+7. **Wallet menu guidance:** The page intentionally avoids exact menu names because wallet
+   interfaces vary. No browser walkthrough or wallet UI navigation was verified in this task.
+8. **Database-backed S1 flow:** The full-suite log shows the DB-backed S1 test did not
    execute because `RUN_DB_TESTS=1` and `MONGODB_URI` were not set.
-8. **Bundle size:** Vite reported a 541.43 kB JavaScript chunk (160.53 kB gzip). The SDK is
+9. **Bundle size:** Vite reported a 544.35 kB JavaScript chunk (160.97 kB gzip). The SDK is
    in the main bundle. This is a performance consideration, not a functional failure.
-9. **CSP check scope:** The CSP header was verified on a local production-mode app instance,
-   not on a deployed host.
-10. **No deployment:** No deployment or external provisioning was performed.
+10. **CSP check scope:** The CSP header was verified on a local production-mode app instance,
+    not on a deployed host.
+11. **No deployment:** No deployment or external provisioning was performed.
 
 ## 10. Report copy verification
 
@@ -669,6 +749,10 @@ reported in the task completion summary.
 
 ## 11. Commit status
 
-The S5 implementation and this report are included in one owner-authorized commit. Nothing
-was pushed. No earlier commit was amended, and no unrelated untracked file was included in
-the commit. No stash, reset, clean, or discard operation was performed. S6 was not started.
+The S5 implementation was committed in `c8b7508` with the message
+`feat(wallet): complete S5 NWC integration`. This setup-guidance change and this report are
+included in a second owner-authorized commit with the message
+`docs(wallet): add NWC connection setup guidance`.
+Nothing was pushed. The earlier commit was not amended, and no unrelated untracked file was
+included in either commit. No stash, reset, clean, or discard operation was performed. S6 was
+not started.

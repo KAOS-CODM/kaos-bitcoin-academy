@@ -462,6 +462,36 @@ test('wallet source keeps credentials out of storage, logs, and the backend', ()
   assert.match(walletSource, /does not unlock/)
   assert.match(walletSource, /seed phrase or private key/)
   assert.match(walletSource, /not a claim that every NWC-compatible\s+wallet is supported/)
+  assert.match(walletSource, /Where to get an NWC connection/)
+  assert.ok(
+    walletSource.indexOf('Where to get an NWC connection') <
+      walletSource.indexOf('Connect your wallet'),
+    'Setup guidance must appear before the connection form',
+  )
+  assert.match(walletSource, /href="https:\/\/coinos\.io"/)
+  assert.match(walletSource, /href="https:\/\/zeusln\.com"/)
+  assert.match(walletSource, /Coinos is the wallet\./)
+  assert.match(walletSource, /ZEUS is the wallet\./)
+  assert.match(walletSource, /Alby is the relay service, not the wallet provider\./)
+  assert.match(walletSource, /two tested examples, not a complete list of compatible wallets\./)
+  assert.match(walletSource, /Previously tested: this wallet\/relay combination/)
+  assert.match(
+    walletSource,
+    /Never share it publicly or paste it into\s+chats, screenshots, support requests, or reports\./,
+  )
+  assert.match(
+    walletSource,
+    /Never enter your wallet seed phrase or private key into the Academy\./,
+  )
+  assert.match(
+    walletSource,
+    /Wallet connection is optional; all educational content remains available\./,
+  )
+  assert.equal(
+    walletSource.includes('Coinos and Alby are examples'),
+    false,
+    'The wallet page must not describe Alby as a wallet example',
+  )
   assert.match(walletSource, /Back to the lesson/)
   assert.match(walletSource, /WALLET_ACTIVITY_LESSON\.path/)
 })

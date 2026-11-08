@@ -263,6 +263,105 @@ export function Wallet() {
         </p>
       </section>
 
+      <section
+        aria-labelledby="setup-heading"
+        className="mt-6 rounded-lg border border-line bg-surface p-5"
+      >
+        <h2 id="setup-heading" className="text-lg font-semibold text-parchment">
+          Where to get an NWC connection
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          Create the connection URI in your own Lightning wallet. Your wallet creates the
+          credential. The relay is the message service named inside the URI; it is not the wallet
+          provider. Use one of the two approved relays listed above.
+        </p>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <article className="rounded-lg border border-line bg-ink p-4">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 className="text-base font-semibold text-parchment">Coinos</h3>
+              <a
+                href="https://coinos.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-amber hover:text-amber-soft"
+              >
+                Visit coinos.io
+              </a>
+            </div>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              Coinos is the wallet. Use its Nostr Wallet Connect or connected-apps settings to
+              create a connection URI. Menu names can vary.
+            </p>
+            <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">
+              Approved relay
+            </p>
+            <code className="mt-1 block break-all rounded-md border border-line bg-surface-2 px-2 py-1.5 text-xs text-parchment">
+              {COINOS_RELAY}
+            </code>
+            <p className="mt-3 text-xs leading-5 text-muted">
+              Previously tested: this wallet/relay combination completed a successful live{' '}
+              <code>get_info</code> connection.
+            </p>
+          </article>
+
+          <article className="rounded-lg border border-line bg-ink p-4">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 className="text-base font-semibold text-parchment">ZEUS</h3>
+              <a
+                href="https://zeusln.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-amber hover:text-amber-soft"
+              >
+                Visit zeusln.com
+              </a>
+            </div>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              ZEUS is the wallet. Use its NWC connection setup to generate a connection URI. Menu
+              names can vary.
+            </p>
+            <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">
+              Approved relay
+            </p>
+            <code className="mt-1 block break-all rounded-md border border-line bg-surface-2 px-2 py-1.5 text-xs text-parchment">
+              {ALBY_RELAY}
+            </code>
+            <p className="mt-3 text-xs leading-5 text-muted">
+              In this tested configuration, Alby is the relay service, not the wallet provider.
+              Previously tested: this wallet/relay combination completed a successful live{' '}
+              <code>get_info</code> connection.
+            </p>
+          </article>
+        </div>
+
+        <p className="mt-4 text-sm leading-6 text-muted">
+          These are two tested examples, not a complete list of compatible wallets. Other wallets
+          may be able to use these approved relays, but the Academy has not tested them. Support is
+          not universal.
+        </p>
+        <p className="mt-3 text-sm leading-6 text-muted">
+          Create a fresh connection for KAOS Bitcoin Academy, use one of the approved relays, and
+          paste the resulting URI into the field below. If your wallet lets you set a budget or
+          permissions, use the smallest budget and limit the connection to <code>get_info</code>.
+          When you are finished, disconnect here and revoke the connection in your wallet.
+        </p>
+
+        <div className="mt-4 rounded-md border border-amber/40 bg-amber/5 p-4 text-sm leading-6 text-muted">
+          <p className="font-semibold text-amber">Before you connect</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>Generate your own fresh NWC connection URI in your wallet.</li>
+            <li>Select one of the Academy&apos;s two approved relays.</li>
+            <li>
+              Treat the URI as a sensitive credential. Never share it publicly or paste it into
+              chats, screenshots, support requests, or reports.
+            </li>
+            <li>Never enter your wallet seed phrase or private key into the Academy.</li>
+            <li>Wallet connection is optional; all educational content remains available.</li>
+          </ul>
+        </div>
+      </section>
+
       <section aria-labelledby="connect-heading" className="mt-8 rounded-lg border border-line bg-surface p-5">
         <h2 id="connect-heading" className="text-lg font-semibold text-parchment">
           Connect your wallet
@@ -325,34 +424,6 @@ export function Wallet() {
       </section>
 
       {info ? <WalletInfo info={info} /> : null}
-
-      <section aria-labelledby="instructions-heading" className="mt-8">
-        <h2 id="instructions-heading" className="text-lg font-semibold text-parchment">
-          How to get an NWC connection URI
-        </h2>
-        <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-muted">
-          <li>
-            Open a Lightning wallet that supports Nostr Wallet Connect and can produce a URI using
-            one of the approved relays above. Coinos and Alby are examples; support is not universal.
-          </li>
-          <li>Find its NWC, app connections, or connected-apps settings.</li>
-          <li>
-            Create a new connection for KAOS Bitcoin Academy. Use a fresh connection rather than
-            reusing one from somewhere else.
-          </li>
-          <li>
-            If your wallet lets you set a budget or permissions, choose the smallest budget and limit
-            the connection to <code>get_info</code>. This page only calls <code>get_info</code>.
-          </li>
-          <li>
-            Confirm the relay is exactly the Coinos relay <code>{COINOS_RELAY}</code> or the Alby
-            relay <code>{ALBY_RELAY}</code>. The Alby URI must include the <code>/v1</code> path.
-            Other relay hosts and paths are rejected.
-          </li>
-          <li>Copy the connection URI from the wallet and paste it into the password field above.</li>
-          <li>When you are finished, disconnect here and revoke the connection in your wallet.</li>
-        </ol>
-      </section>
 
       <section aria-labelledby="safety-heading" className="mt-8 rounded-lg border border-line bg-surface p-5">
         <h2 id="safety-heading" className="text-lg font-semibold text-parchment">

@@ -110,6 +110,26 @@ test('the built learner interface includes the optional NWC wallet page', { skip
   assert.match(bundle, /Requests wallet balance information\./)
   assert.match(bundle, /Requests payment of an invoice\./)
   assert.match(bundle, /has not called or tested/)
+  assert.match(bundle, /Where to get an NWC connection/)
+  assert.match(bundle, /https:\/\/coinos\.io/)
+  assert.match(bundle, /https:\/\/zeusln\.com/)
+  assert.match(bundle, /Coinos is the wallet\./)
+  assert.match(bundle, /ZEUS is the wallet\./)
+  assert.match(bundle, /Alby is the relay service, not the wallet provider\./)
+  assert.match(bundle, /two tested examples, not a complete list of compatible wallets\./)
+  assert.match(bundle, /Previously tested: this wallet\/relay combination/)
+  assert.match(
+    bundle,
+    /Never share it publicly or paste it into chats, screenshots, support requests, or reports\./,
+  )
+  assert.match(
+    bundle,
+    /Never enter your wallet seed phrase or private key into the Academy\./,
+  )
+  assert.match(
+    bundle,
+    /Wallet connection is optional; all educational content remains available\./,
+  )
 
   for (const marker of [
     'localStorage',
