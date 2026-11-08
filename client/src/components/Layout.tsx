@@ -56,6 +56,12 @@ export function Layout() {
             {!isLoading && user ? (
               <>
                 <Link
+                  to="/tutor"
+                  className="rounded px-3 py-2 text-muted transition hover:text-parchment"
+                >
+                  AI Tutor
+                </Link>
+                <Link
                   to="/dashboard"
                   className="rounded px-3 py-2 text-muted transition hover:text-parchment"
                 >

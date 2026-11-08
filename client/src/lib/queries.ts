@@ -10,6 +10,8 @@ import type {
   QuizAttemptResponse,
   QuizResponse,
   QuizResultsResponse,
+  TutorChatResponse,
+  TutorHistoryMessage,
   User,
 } from './types'
 
@@ -99,6 +101,20 @@ export function useSubmitQuizAttempt(slug: string) {
       void queryClient.invalidateQueries({ queryKey: ['courses'] })
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
     },
+  })
+}
+
+export function useTutorChat() {
+  return useMutation({
+    mutationFn: (input: {
+      message: string
+      lessonSlug?: string
+      history: TutorHistoryMessage[]
+    }) =>
+      api<TutorChatResponse>('/tutor/chat', {
+        method: 'POST',
+        json: input,
+      }),
   })
 }
 

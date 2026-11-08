@@ -180,6 +180,20 @@ export interface MeResponse {
   user: User | null
 }
 
+export interface TutorHistoryMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+export interface TutorChatResponse {
+  reply: string
+  context: {
+    lessonSlug: string | null
+    lessonTitle: string | null
+    courseTitle: string | null
+  }
+}
+
 export interface CompleteLessonResponse {
   completed: boolean
   alreadyCompleted: boolean

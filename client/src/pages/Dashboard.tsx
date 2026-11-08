@@ -55,6 +55,12 @@ export function Dashboard() {
             ? 'Your progress will appear here once you complete your first lesson.'
             : 'Pick up where you left off, or start a new course.'}
         </p>
+        <Link
+          to={resume?.lesson ? `/tutor?lesson=${resume.lesson.slug}` : '/tutor'}
+          className="mt-5 inline-block rounded-md border border-amber/50 px-4 py-2.5 text-sm font-semibold text-amber hover:border-amber"
+        >
+          Ask the AI Tutor
+        </Link>
       </header>
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">

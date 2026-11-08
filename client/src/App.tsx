@@ -11,6 +11,7 @@ import { Register } from './pages/Register'
 import { Dashboard } from './pages/Dashboard'
 import { Playground } from './pages/Playground'
 import { PlaygroundSimulation } from './pages/PlaygroundSimulation'
+import { Tutor } from './pages/Tutor'
 import { NotFound } from './pages/NotFound'
 
 export default function App() {
@@ -24,6 +25,14 @@ export default function App() {
         <Route path="quizzes/:slug" element={<Quiz />} />
         <Route path="playground" element={<Playground />} />
         <Route path="playground/:simulationId" element={<PlaygroundSimulation />} />
+        <Route
+          path="tutor"
+          element={
+            <ProtectedRoute>
+              <Tutor />
+            </ProtectedRoute>
+          }
+        />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route

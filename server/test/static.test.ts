@@ -16,6 +16,7 @@ test('production build serves the SPA and its client-side routes', { skip: !buil
     '/',
     '/courses',
     '/dashboard',
+    '/tutor',
     '/playground',
     '/playground/wallet-creation',
     '/playground/key-relationships',
@@ -44,7 +45,15 @@ test('the frontend bundle contains no server secrets or credentials', { skip: !b
     ...readdirSync(assetDir).map((name) => path.join(assetDir, name)),
   ]
 
-  const forbidden = ['mongodb+srv://', 'MONGODB_URI', 'SESSION_SECRET', 'passwordHash']
+  const forbidden = [
+    'mongodb+srv://',
+    'MONGODB_URI',
+    'SESSION_SECRET',
+    'passwordHash',
+    'OPENROUTER_API_KEY',
+    'OPENROUTER_MODEL',
+    'openrouter/auto',
+  ]
 
   for (const file of files) {
     if (!/\.(js|css|html)$/.test(file)) continue
@@ -57,4 +66,20 @@ test('the frontend bundle contains no server secrets or credentials', { skip: !b
       )
     }
   }
+})
+
+test('the built learner interface includes the tutor page and API call', { skip: !built }, () => {
+  const assetDir = path.join(config.clientDist, 'assets')
+  const files = [
+    indexHtml,
+    ...readdirSync(assetDir).map((name) => path.join(assetDir, name)),
+  ]
+  const bundle = files
+    .filter((file) => /\.(js|html)$/.test(file))
+    .map((file) => readFileSync(file, 'utf8'))
+    .join('\n')
+
+  assert.match(bundle, /\/tutor\/chat/)
+  assert.match(bundle, /AI Tutor/)
+  assert.match(bundle, /Ask the AI Tutor/)
 })

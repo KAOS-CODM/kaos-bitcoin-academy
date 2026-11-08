@@ -49,6 +49,20 @@ test('data routes degrade to a controlled 503 when the database is unavailable',
   assert.equal(quizAttempt.status, 503)
 })
 
+test('the tutor API is mounted and requires authentication', async (t) => {
+  const server = await startTestServer()
+  t.after(() => server.close())
+
+  const response = await fetch(`${server.baseUrl}/api/tutor/chat`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ message: 'What is Bitcoin?' }),
+  })
+  assert.equal(response.status, 401)
+  const body = (await response.json()) as { error: { code: string } }
+  assert.equal(body.error.code, 'UNAUTHORIZED')
+})
+
 test('unknown API endpoints return a JSON 404, not the SPA', async (t) => {
   const server = await startTestServer()
   t.after(() => server.close())

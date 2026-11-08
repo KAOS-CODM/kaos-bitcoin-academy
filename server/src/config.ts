@@ -11,6 +11,8 @@ const EnvSchema = z.object({
   APP_ORIGIN: z.string().url().optional(),
   RENDER_EXTERNAL_URL: z.string().url().optional(),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+  AI_ENABLED: z.enum(['true', 'false']).optional(),
+  OPENROUTER_API_KEY: z.string().trim().min(1).optional(),
 })
 
 const parsed = EnvSchema.safeParse(
@@ -44,6 +46,11 @@ if (!isProd && !env.SESSION_SECRET) {
   console.warn('SESSION_SECRET is not set; using an insecure development-only secret.')
 }
 
+const aiEnabled = env.AI_ENABLED === 'true' && Boolean(env.OPENROUTER_API_KEY)
+if (env.AI_ENABLED === 'true' && !env.OPENROUTER_API_KEY) {
+  console.warn('AI_ENABLED is true but OPENROUTER_API_KEY is not set; the AI Tutor stays disabled.')
+}
+
 const allowedOrigins = [env.APP_ORIGIN, env.RENDER_EXTERNAL_URL].filter(
   (value): value is string => Boolean(value),
 )
@@ -59,6 +66,10 @@ export const config = {
     env.SESSION_SECRET ?? 'development-only-insecure-session-secret-change-me',
   allowedOrigins,
   logLevel: env.LOG_LEVEL,
+  // The model stays a single OpenRouter routing alias; no model catalogue or
+  // custom rotation is maintained by the academy server.
+  aiEnabled,
+  openRouterApiKey: env.OPENROUTER_API_KEY,
   // server/src (dev) and server/dist (build) are both two levels below the repo root.
   clientDist: fileURLToPath(new URL('../../client/dist/', import.meta.url)),
   sessionCookieName: isProd ? '__Host-kaos_session' : 'kaos_session',

@@ -165,6 +165,21 @@ export function Lesson() {
         <SectionRenderer sections={lesson.sections} />
       </article>
 
+      <section className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-surface p-5">
+        <div>
+          <h2 className="text-lg font-semibold text-parchment">Need another explanation?</h2>
+          <p className="mt-1 text-sm text-muted">
+            Ask the AI Tutor about this lesson and get a beginner-friendly walkthrough.
+          </p>
+        </div>
+        <Link
+          to={`/tutor?lesson=${lesson.slug}`}
+          className="rounded-md bg-amber px-4 py-2.5 text-sm font-semibold text-ink hover:bg-amber-soft"
+        >
+          Ask the tutor
+        </Link>
+      </section>
+
       {quiz ? (
         quizQuery.isPending ? (
           <div className="mt-10 rounded-lg border border-line bg-surface p-5" role="status">

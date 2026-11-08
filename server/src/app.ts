@@ -17,6 +17,7 @@ import { lessonsRouter } from './routes/lessons.js'
 import { progressRouter } from './routes/progress.js'
 import { dashboardRouter } from './routes/dashboard.js'
 import { quizzesRouter } from './routes/quizzes.js'
+import { tutorRouter } from './routes/tutor.js'
 
 export interface AppOptions {
   sessionStore?: Store
@@ -95,6 +96,7 @@ export function createApp(options: AppOptions = {}): Express {
   app.use('/api/progress', progressRouter)
   app.use('/api/dashboard', dashboardRouter)
   app.use('/api/quizzes', quizzesRouter)
+  app.use('/api/tutor', tutorRouter)
 
   app.use('/api', apiNotFound)
 
