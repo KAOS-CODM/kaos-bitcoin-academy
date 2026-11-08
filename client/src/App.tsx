@@ -12,6 +12,7 @@ import { Dashboard } from './pages/Dashboard'
 import { Playground } from './pages/Playground'
 import { PlaygroundSimulation } from './pages/PlaygroundSimulation'
 import { Tutor } from './pages/Tutor'
+import { Wallet } from './pages/Wallet'
 import { NotFound } from './pages/NotFound'
 
 export default function App() {
@@ -30,6 +31,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Tutor />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="wallet"
+          element={
+            <ProtectedRoute>
+              <Wallet />
             </ProtectedRoute>
           }
         />

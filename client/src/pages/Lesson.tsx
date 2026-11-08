@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom'
 import { SectionRenderer } from '../components/SectionRenderer'
 import { QuizRunner } from '../components/Quiz'
+import { WALLET_ACTIVITY_LESSON } from '../features/wallet/activity'
+import { WalletActivityCallout } from '../features/wallet/WalletActivityCallout'
 import { useCompleteLesson, useLesson, useQuiz } from '../lib/queries'
 import { ApiError } from '../lib/api'
 
@@ -164,6 +166,11 @@ export function Lesson() {
       <article className="mt-10">
         <SectionRenderer sections={lesson.sections} />
       </article>
+
+      {course.slug === WALLET_ACTIVITY_LESSON.courseSlug &&
+      lesson.slug === WALLET_ACTIVITY_LESSON.slug ? (
+        <WalletActivityCallout />
+      ) : null}
 
       <section className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-surface p-5">
         <div>

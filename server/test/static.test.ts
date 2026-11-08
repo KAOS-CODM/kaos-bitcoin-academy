@@ -17,6 +17,7 @@ test('production build serves the SPA and its client-side routes', { skip: !buil
     '/courses',
     '/dashboard',
     '/tutor',
+    '/wallet',
     '/playground',
     '/playground/wallet-creation',
     '/playground/key-relationships',
@@ -82,4 +83,42 @@ test('the built learner interface includes the tutor page and API call', { skip:
   assert.match(bundle, /\/tutor\/chat/)
   assert.match(bundle, /AI Tutor/)
   assert.match(bundle, /Ask the AI Tutor/)
+})
+
+test('the built learner interface includes the optional NWC wallet page', { skip: !built }, () => {
+  const assetDir = path.join(config.clientDist, 'assets')
+  const files = [
+    indexHtml,
+    ...readdirSync(assetDir).map((name) => path.join(assetDir, name)),
+  ]
+  const bundle = files
+    .filter((file) => /\.(js|html)$/.test(file))
+    .map((file) => readFileSync(file, 'utf8'))
+    .join('\n')
+
+  assert.match(bundle, /Nostr Wallet Connect/)
+  assert.match(bundle, /wss:\/\/relay\.coinos\.io/)
+  assert.match(bundle, /wss:\/\/relay\.getalby\.com\/v1/)
+  assert.match(bundle, /Disconnect and clear/)
+  assert.match(bundle, /get_info/)
+  assert.match(bundle, /Optional practical activity/)
+  assert.match(bundle, /does not create an invoice/)
+  assert.match(bundle, /Channels, liquidity and invoices/)
+  assert.match(bundle, /Back to the lesson/)
+  assert.match(bundle, /Method used by the Academy/)
+  assert.match(bundle, /Methods reported by the connected wallet/)
+  assert.match(bundle, /Requests wallet balance information\./)
+  assert.match(bundle, /Requests payment of an invoice\./)
+  assert.match(bundle, /has not called or tested/)
+
+  for (const marker of [
+    'localStorage',
+    'sessionStorage',
+    'indexedDB',
+    'document.cookie',
+    'XMLHttpRequest',
+    'navigator.sendBeacon',
+  ]) {
+    assert.equal(bundle.includes(marker), false, `Built wallet bundle must not contain ${marker}`)
+  }
 })

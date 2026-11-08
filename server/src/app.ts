@@ -43,7 +43,7 @@ export function createApp(options: AppOptions = {}): Express {
               scriptSrc: ["'self'"],
               styleSrc: ["'self'"],
               imgSrc: ["'self'", 'data:'],
-              connectSrc: ["'self'"],
+              connectSrc: ["'self'", 'wss://relay.coinos.io', 'wss://relay.getalby.com'],
               fontSrc: ["'self'"],
               objectSrc: ["'none'"],
               frameAncestors: ["'none'"],
