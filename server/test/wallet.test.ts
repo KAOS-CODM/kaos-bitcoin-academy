@@ -496,6 +496,26 @@ test('wallet source keeps credentials out of storage, logs, and the backend', ()
   assert.match(walletSource, /WALLET_ACTIVITY_LESSON\.path/)
 })
 
+test('ZEUS relay alternatives stay informational and outside the allowlist and CSP', () => {
+  const walletSource = read('client/src/pages/Wallet.tsx')
+  const nwcSource = read('client/src/features/wallet/nwc.ts')
+  const serverSource = read('server/src/app.ts')
+
+  assert.match(walletSource, /ZEUS is the wallet\. It lets you choose from multiple NWC relays\./)
+  assert.match(walletSource, /wss:\/\/relay\.snort\.social/)
+  assert.match(walletSource, /wss:\/\/relay\.dasmus\.io/)
+  assert.match(walletSource, /Snort[^<]*not approved for Academy use/)
+  assert.match(walletSource, /Dasmus[^<]*not approved for Academy use/)
+  assert.match(walletSource, /Custom relay[^<]*not approved for Academy use/)
+  assert.match(walletSource, /select Alby/)
+  assert.match(walletSource, /The Academy has approved and tested ZEUS only with Alby\./)
+
+  assert.equal(nwcSource.includes('relay.snort.social'), false)
+  assert.equal(nwcSource.includes('relay.dasmus.io'), false)
+  assert.equal(serverSource.includes('relay.snort.social'), false)
+  assert.equal(serverSource.includes('relay.dasmus.io'), false)
+})
+
 test('production CSP allows only the two approved relay WebSocket origins', () => {
   const serverSource = read('server/src/app.ts')
   assert.match(
@@ -511,7 +531,7 @@ test('production CSP allows only the two approved relay WebSocket origins', () =
   )
 })
 
-test('the wallet page stays protected and is introduced from the Lightning lesson', () => {
+test('the wallet page stays protected and is linked from the main navigation and Lightning lesson', () => {
   const appSource = read('client/src/App.tsx')
   assert.match(
     appSource,
@@ -519,10 +539,14 @@ test('the wallet page stays protected and is introduced from the Lightning lesso
   )
 
   const layoutSource = read('client/src/components/Layout.tsx')
-  assert.equal(
-    layoutSource.includes('to="/wallet"'),
-    false,
-    'Wallet must not remain an ordinary top-level navigation destination',
+  assert.match(
+    layoutSource,
+    /<nav aria-label="Main" className="flex flex-wrap items-center gap-2 text-sm">/,
+  )
+  assert.match(
+    layoutSource,
+    /!isLoading && user \?[\s\S]*?to="\/wallet"[\s\S]*?>\s*Wallet\s*<\/Link>/,
+    'Signed-in learners must have a direct Wallet link in the main navigation',
   )
 
   const lessonSource = read('client/src/pages/Lesson.tsx')

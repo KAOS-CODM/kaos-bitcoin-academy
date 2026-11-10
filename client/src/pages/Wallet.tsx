@@ -318,8 +318,8 @@ export function Wallet() {
               </a>
             </div>
             <p className="mt-2 text-sm leading-6 text-muted">
-              ZEUS is the wallet. Use its NWC connection setup to generate a connection URI. Menu
-              names can vary.
+              ZEUS is the wallet. It lets you choose from multiple NWC relays. Use its NWC
+              connection setup to generate a connection URI. Menu names can vary.
             </p>
             <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">
               Approved relay
@@ -328,9 +328,45 @@ export function Wallet() {
               {ALBY_RELAY}
             </code>
             <p className="mt-3 text-xs leading-5 text-muted">
-              In this tested configuration, Alby is the relay service, not the wallet provider.
-              Previously tested: this wallet/relay combination completed a successful live{' '}
-              <code>get_info</code> connection.
+              A ZEUS-generated URI using Alby previously completed a successful live{' '}
+              <code>get_info</code> connection. Alby is the relay service, not the wallet provider.
+            </p>
+
+            <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">
+              ZEUS relay options
+            </p>
+            <ul className="mt-1 space-y-1 text-xs leading-5 text-muted">
+              <li>
+                <span className="font-semibold text-parchment">
+                  Alby — approved for Academy use:
+                </span>{' '}
+                <code className="break-all">{ALBY_RELAY}</code>
+              </li>
+              <li>
+                <span className="font-semibold text-parchment">
+                  Snort — not approved for Academy use:
+                </span>{' '}
+                <code className="break-all">wss://relay.snort.social</code>
+              </li>
+              <li>
+                <span className="font-semibold text-parchment">
+                  Dasmus — not approved for Academy use:
+                </span>{' '}
+                <code className="break-all">wss://relay.dasmus.io</code>
+              </li>
+              <li>
+                <span className="font-semibold text-parchment">
+                  Custom relay — not approved for Academy use:
+                </span>{' '}
+                ZEUS also allows you to enter a custom relay URL. The Academy has not tested or
+                approved custom relays.
+              </li>
+            </ul>
+            <p className="mt-3 text-xs leading-5 text-muted">
+              The Academy has approved and tested ZEUS only with Alby. For the Academy&apos;s
+              current wallet activity, select Alby. The other relay options are shown only to
+              explain ZEUS&apos;s capabilities; they have not been tested or approved for Academy
+              use.
             </p>
           </article>
         </div>

@@ -39,7 +39,7 @@ export function Layout() {
             </span>
           </Link>
 
-          <nav aria-label="Main" className="flex items-center gap-2 text-sm">
+          <nav aria-label="Main" className="flex flex-wrap items-center gap-2 text-sm">
             <Link
               to="/courses"
               className="rounded px-3 py-2 text-muted transition hover:text-parchment"
@@ -60,6 +60,12 @@ export function Layout() {
                   className="rounded px-3 py-2 text-muted transition hover:text-parchment"
                 >
                   AI Tutor
+                </Link>
+                <Link
+                  to="/wallet"
+                  className="rounded px-3 py-2 text-muted transition hover:text-parchment"
+                >
+                  Wallet
                 </Link>
                 <Link
                   to="/dashboard"

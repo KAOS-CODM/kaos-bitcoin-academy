@@ -118,6 +118,12 @@ test('the built learner interface includes the optional NWC wallet page', { skip
   assert.match(bundle, /Alby is the relay service, not the wallet provider\./)
   assert.match(bundle, /two tested examples, not a complete list of compatible wallets\./)
   assert.match(bundle, /Previously tested: this wallet\/relay combination/)
+  assert.match(bundle, /ZEUS is the wallet\. It lets you choose from multiple NWC relays\./)
+  assert.match(bundle, /wss:\/\/relay\.snort\.social/)
+  assert.match(bundle, /wss:\/\/relay\.dasmus\.io/)
+  assert.match(bundle, /Custom relay/)
+  assert.match(bundle, /not approved for Academy use/)
+  assert.match(bundle, /select Alby/)
   assert.match(
     bundle,
     /Never share it publicly or paste it into chats, screenshots, support requests, or reports\./,
