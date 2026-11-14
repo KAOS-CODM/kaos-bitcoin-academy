@@ -184,12 +184,18 @@ open source under MIT.**
 | Item | Decision |
 | --- | --- |
 | Licence | **MIT** — recommended above and approved |
-| Copyright holder | `KAOS-CODM` |
+| Copyright holder | **Isaiah Yemi Adelowo (KAOS-CODM)** |
 | Copyright year | `2026` |
 | File | `LICENSE` |
 
 The notice is the exact text that was proposed in the previous report, and the README's
 licence badge and §Q have been updated to state the licence as in force rather than pending.
+
+**Attribution correction.** The owner subsequently confirmed the full copyright attribution
+as `Isaiah Yemi Adelowo (KAOS-CODM)` — both identities together — replacing the abbreviated
+`KAOS-CODM` used in the first draft. That notice is now used in `LICENSE`, `README.md`,
+`CONTRIBUTING.md`, and `SECURITY.md`. The GitHub handle `KAOS-CODM` continues to appear, as it
+correctly should, in repository URLs and Devpost links.
 
 ### Additional documentation created under the same approval
 
@@ -327,7 +333,7 @@ them is a separate content decision. Two notes for your decision:
 | --- | --- | --- |
 | **No screenshots** | The hackathon criteria explicitly reward a clear pitch, and a README without visuals is weaker than one with them | Capture the eight views listed in the README's placeholder table and commit them under `docs/screenshots/` |
 | **No demonstration video** | The Devpost submission expects one | Record the 3–5 minute script already outlined in §E, and link it from the Devpost page and the README |
-| **No `LICENSE`** | — | **Resolved.** MIT was approved and `LICENSE` created with `Copyright (c) 2026 KAOS-CODM` |
+| **No `LICENSE`** | — | **Resolved.** MIT was approved and `LICENSE` created with `Copyright (c) 2026 Isaiah Yemi Adelowo (KAOS-CODM)` |
 | **No `SECURITY.md` / `CONTRIBUTING.md`** | Reviewers look for them | **Resolved.** Both created; the README links to both |
 | **No `CODE_OF_CONDUCT.md`** | Expected of a public project | **Outstanding.** It needs a named enforcement contact, which does not exist yet. It was deliberately not created with a placeholder address |
 | **Empty root documentation files** | `CHANGELOG.md` in particular renders as an empty page on GitHub | Decide whether to populate them or remove them |

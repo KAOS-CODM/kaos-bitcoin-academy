@@ -49,7 +49,7 @@ money or their keys.
 | **Project** | KAOS Bitcoin Academy |
 | **Tagline** | Understand Bitcoin. Experience the Network. |
 | **Repository** | [github.com/KAOS-CODM/kaos-bitcoin-academy](https://github.com/KAOS-CODM/kaos-bitcoin-academy) |
-| **Developer** | [KAOS-CODM on Devpost](https://devpost.com/KAOS-CODM) |
+| **Developer** | Isaiah Yemi Adelowo ([KAOS-CODM on Devpost](https://devpost.com/KAOS-CODM)) |
 | **Hackathon** | [Dakar Bitcoin Hack 2026 by BTrust](https://dakar-bitcoin-hack-2026.devpost.com/) |
 | **Deadline** | 20 November 2026, 9:00 PM GMT+1 |
 | **Live deployment** | *Not yet deployed.* See [Deployment](#m-deployment). |
@@ -1013,12 +1013,15 @@ module, the AI tutor is optional, and no permanent deployment exists yet.
 This project is released under the **[MIT License](./LICENSE)**.
 
 ```
-MIT License — Copyright (c) 2026 KAOS-CODM
+MIT License — Copyright (c) 2026 Isaiah Yemi Adelowo (KAOS-CODM)
 ```
 
 MIT was chosen because this is an educational project meant to be read, forked, and taught
 from: it keeps attribution intact without imposing conditions on learners or on anyone who
 reuses the code. The full text is in [`LICENSE`](./LICENSE).
+
+The copyright is held by **Isaiah Yemi Adelowo**, also known on GitHub and Devpost as
+**KAOS-CODM**. The MIT terms themselves are unmodified.
 
 ### Contributing
 

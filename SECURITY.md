@@ -134,3 +134,7 @@ third-party wallet service being malicious, is not a vulnerability in this proje
 
 This project is released under the [MIT License](./LICENSE). Please read it before reusing
 the code.
+
+```
+MIT License — Copyright (c) 2026 Isaiah Yemi Adelowo (KAOS-CODM)
+```

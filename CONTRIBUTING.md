@@ -160,6 +160,13 @@ Contributions are accepted under the [MIT License](./LICENSE), which covers both
 existing code and any contribution you submit. By opening a pull request you confirm that you
 are happy for your work to be distributed under that licence.
 
+```
+MIT License — Copyright (c) 2026 Isaiah Yemi Adelowo (KAOS-CODM)
+```
+
+The copyright is held by **Isaiah Yemi Adelowo**, also known on GitHub and Devpost as
+**KAOS-CODM**. The MIT terms themselves are unmodified.
+
 ---
 
 ## Code of conduct
