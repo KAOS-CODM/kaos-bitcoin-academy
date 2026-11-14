@@ -55,7 +55,11 @@ Copy `client/.env.example` to `client/.env.local`. Everything prefixed with `VIT
 ## 3. Build
 
 ```sh
-npm install
+# The root package only holds the workspace scripts; the applications live in
+# client/ and server/ and each has its own manifest and lockfile.
+npm install --prefix client
+npm install --prefix server
+
 npm run build
 ```
 
@@ -112,9 +116,12 @@ from the request log so a polling platform does not flood the logs.
 - In production the cookie is named `__Host-kaos_session`. The `__Host-` prefix requires
   `secure`, `path=/`, and **no** `domain` attribute, so the browser only sends it to the
   exact origin that set it.
-- The session store is the in-process `MemoryStore` by default. **A single-process deployment
-  is required**, or a shared session store must be configured. The warning is printed on
-  start-up in production.
+- The session store is MongoDB (`connect-mongo`) whenever `MONGODB_URI` is configured, which
+  is always the case in production. Sessions are stored in a `sessions` collection with a
+  seven-day TTL, so **a multi-process deployment works** and sessions survive a restart.
+  The in-process `MemoryStore` is only the fallback used when no database is configured,
+  which cannot happen in production because the server refuses to start without
+  `MONGODB_URI`.
 - Every mutating request must be JSON and must come from the request host or from an
   allowed origin (`APP_ORIGIN`, `RENDER_EXTERNAL_URL`). This is the CSRF defence.
 - The server does **not** send a permissive `Access-Control-Allow-Origin` header. Same-origin
