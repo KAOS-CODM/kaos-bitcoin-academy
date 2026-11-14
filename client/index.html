@@ -8,10 +8,27 @@
       name="description"
       content="KAOS Bitcoin Academy: free, beginner-first Bitcoin education. Learn how Bitcoin works, at your own pace."
     />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/icon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="KAOS Academy" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <title>KAOS Bitcoin Academy</title>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <div style="padding: 2rem; font-family: system-ui, sans-serif; color: #ffffff">
+        <h1>KAOS Bitcoin Academy</h1>
+        <p>
+          This academy needs JavaScript to run. The lessons are plain text, so you can also read
+          them from the published course pages without JavaScript.
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

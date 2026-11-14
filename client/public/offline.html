@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17140f" />
+    <title>Offline — KAOS Bitcoin Academy</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #17140f;
+        --surface: #211e18;
+        --line: #3a342b;
+        --parchment: #ffffff;
+        --muted: #a8a29e;
+        --amber: #f5b942;
+      }
+
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--parchment);
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+      }
+
+      main {
+        margin: 0 auto;
+        max-width: 42rem;
+        padding: 3rem 1rem;
+      }
+
+      .mark {
+        display: grid;
+        height: 2.25rem;
+        width: 2.25rem;
+        place-items: center;
+        border-radius: 0.375rem;
+        background: var(--amber);
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      h1 {
+        margin: 1.25rem 0 0;
+        font-size: 1.75rem;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0.75rem 0 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .notice {
+        margin-top: 1.5rem;
+        border: 1px solid var(--line);
+        border-radius: 0.5rem;
+        background: var(--surface);
+        padding: 1rem;
+      }
+
+      .notice strong {
+        color: var(--parchment);
+      }
+
+      a.button {
+        display: inline-block;
+        margin-top: 1.5rem;
+        border-radius: 0.375rem;
+        background: var(--amber);
+        padding: 0.75rem 1.25rem;
+        font-weight: 600;
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      code {
+        color: var(--parchment);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <span class="mark" aria-hidden="true">K</span>
+      <h1>You are offline</h1>
+      <p>
+        The KAOS Bitcoin Academy needs a connection to load this page. The lessons you have
+        already read stay available once the connection returns.
+      </p>
+
+      <div class="notice">
+        <p style="margin: 0">
+          <strong>Nothing was sent.</strong> While you are offline, no account request, wallet
+          request, payment, or invoice can be completed. The academy never reports an action as
+          successful until your server and your wallet confirm it.
+        </p>
+      </div>
+
+      <a class="button" href="/">Try again</a>
+    </main>
+  </body>
+</html>

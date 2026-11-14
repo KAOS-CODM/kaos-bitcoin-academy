@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="KAOS Bitcoin Academy">
+  <rect width="100" height="100" rx="22" fill="#17140f" />
+  <g stroke="#f5b942" stroke-width="17" stroke-linecap="round" fill="none">
+    <path d="M28 18 V82" />
+    <path d="M32 50 L74 18" />
+    <path d="M32 50 L74 82" />
+  </g>
+</svg>

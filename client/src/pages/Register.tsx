@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { fieldErrors } from '../lib/api'
 import { useMe, useRegister } from '../lib/queries'
+import { FormField, useFocusFirstError } from '../components/FormField'
 
 export function Register() {
   const { data, isLoading } = useMe()
@@ -21,6 +22,8 @@ export function Register() {
         ? register.error.message
         : 'Account creation failed. Please try again.'
       : null
+
+  useFocusFirstError(errors)
 
   if (!isLoading && data?.user) {
     return <Navigate to={next} replace />
@@ -42,87 +45,64 @@ export function Register() {
       </p>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-5" noValidate>
-        <div>
-          <label htmlFor="displayName" className="mb-1.5 block text-sm font-medium text-parchment">
-            Display name
-          </label>
-          <input
-            id="displayName"
-            name="displayName"
-            type="text"
-            autoComplete="nickname"
-            required
-            minLength={2}
-            maxLength={40}
-            value={displayName}
-            onChange={(event) => setDisplayName(event.target.value)}
-            aria-invalid={Boolean(errors.displayName)}
-            aria-describedby={errors.displayName ? 'displayName-error' : undefined}
-            className="w-full rounded-md border border-line bg-surface px-3 py-2.5 text-parchment"
-            placeholder="How should we address you?"
-          />
-          {errors.displayName ? (
-            <p id="displayName-error" className="mt-1.5 text-sm text-danger">
-              {errors.displayName}
-            </p>
-          ) : null}
-        </div>
-
-        <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-parchment">
-            Email address
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? 'email-error' : undefined}
-            className="w-full rounded-md border border-line bg-surface px-3 py-2.5 text-parchment"
-            placeholder="you@example.com"
-          />
-          {errors.email ? (
-            <p id="email-error" className="mt-1.5 text-sm text-danger">
-              {errors.email}
-            </p>
-          ) : null}
-        </div>
-
-        <div>
-          <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-parchment">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            required
-            minLength={10}
-            maxLength={128}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            aria-invalid={Boolean(errors.password)}
-            aria-describedby={errors.password ? 'password-error' : 'password-hint'}
-            className="w-full rounded-md border border-line bg-surface px-3 py-2.5 text-parchment"
-          />
-          {errors.password ? (
-            <p id="password-error" className="mt-1.5 text-sm text-danger">
-              {errors.password}
-            </p>
-          ) : (
-            <p id="password-hint" className="mt-1.5 text-sm text-muted">
-              At least 10 characters. A short phrase is easier to remember than a single word.
-            </p>
+        <FormField id="displayName" label="Display name" error={errors.displayName}>
+          {(field) => (
+            <input
+              {...field}
+              name="displayName"
+              type="text"
+              autoComplete="nickname"
+              required
+              minLength={2}
+              maxLength={40}
+              value={displayName}
+              onChange={(event) => setDisplayName(event.target.value)}
+              placeholder="How should we address you?"
+            />
           )}
-        </div>
+        </FormField>
+
+        <FormField id="email" label="Email address" error={errors.email}>
+          {(field) => (
+            <input
+              {...field}
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+            />
+          )}
+        </FormField>
+
+        <FormField
+          id="password"
+          label="Password"
+          error={errors.password}
+          hint="At least 10 characters. A short phrase is easier to remember than a single word."
+        >
+          {(field) => (
+            <input
+              {...field}
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              required
+              minLength={10}
+              maxLength={128}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          )}
+        </FormField>
 
         {generalError ? (
-          <p className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2.5 text-sm text-danger" role="alert">
+          <p
+            className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2.5 text-sm text-danger"
+            role="alert"
+          >
             {generalError}
           </p>
         ) : null}
@@ -130,6 +110,7 @@ export function Register() {
         <button
           type="submit"
           disabled={register.isPending}
+          aria-busy={register.isPending}
           className="w-full rounded-md bg-amber px-4 py-2.5 font-semibold text-ink transition hover:bg-amber-soft disabled:opacity-60"
         >
           {register.isPending ? 'Creating account…' : 'Create account'}

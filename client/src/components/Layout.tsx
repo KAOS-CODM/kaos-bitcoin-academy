@@ -1,5 +1,14 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useLogout, useMe } from '../lib/queries'
+import { InstallButton, PwaManager } from './PwaManager'
+
+const navLinkClasses = ({ isActive }: { isActive: boolean }): string =>
+  [
+    'rounded px-3 py-2 transition',
+    isActive
+      ? 'bg-surface-2 font-semibold text-parchment'
+      : 'text-muted hover:bg-surface-2/60 hover:text-parchment',
+  ].join(' ')
 
 export function Layout() {
   const { data, isLoading } = useMe()
@@ -23,11 +32,14 @@ export function Layout() {
       </a>
 
       <header className="border-b border-line/80 bg-ink/95">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-3">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">
+          <NavLink
+            to="/"
+            className="flex items-center gap-3 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
+          >
             <span
               aria-hidden="true"
-              className="grid h-9 w-9 place-items-center rounded-md bg-amber font-bold text-ink"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-amber font-bold text-ink"
             >
               K
             </span>
@@ -37,43 +49,32 @@ export function Layout() {
               </span>
               <span className="block text-xs text-muted">Free, beginner-first lessons</span>
             </span>
-          </Link>
+          </NavLink>
 
-          <nav aria-label="Main" className="flex flex-wrap items-center gap-2 text-sm">
-            <Link
-              to="/courses"
-              className="rounded px-3 py-2 text-muted transition hover:text-parchment"
-            >
+          <nav
+            aria-label="Main"
+            className="-mx-1 flex flex-1 flex-wrap items-center gap-1 overflow-x-auto px-1 text-sm md:justify-end"
+          >
+            <NavLink to="/courses" className={navLinkClasses}>
               Courses
-            </Link>
-            <Link
-              to="/playground"
-              className="rounded px-3 py-2 text-muted transition hover:text-parchment"
-            >
+            </NavLink>
+            <NavLink to="/playground" className={navLinkClasses}>
               Playground
-            </Link>
+            </NavLink>
 
             {!isLoading && user ? (
               <>
-                <Link
-                  to="/tutor"
-                  className="rounded px-3 py-2 text-muted transition hover:text-parchment"
-                >
+                <NavLink to="/tutor" className={navLinkClasses}>
                   AI Tutor
-                </Link>
-                <Link
-                  to="/wallet"
-                  className="rounded px-3 py-2 text-muted transition hover:text-parchment"
-                >
+                </NavLink>
+                <NavLink to="/wallet" className={navLinkClasses}>
                   Wallet
-                </Link>
-                <Link
-                  to="/dashboard"
-                  className="rounded px-3 py-2 text-muted transition hover:text-parchment"
-                >
+                </NavLink>
+                <NavLink to="/dashboard" className={navLinkClasses}>
                   Dashboard
-                </Link>
-                <span className="hidden text-muted sm:inline">{user.displayName}</span>
+                </NavLink>
+                <span className="hidden px-2 text-muted sm:inline">{user.displayName}</span>
+                <InstallButton />
                 <button
                   type="button"
                   onClick={onSignOut}
@@ -87,25 +88,29 @@ export function Layout() {
 
             {!isLoading && !user ? (
               <>
-                <Link
-                  to="/login"
-                  className="rounded px-3 py-2 text-muted transition hover:text-parchment"
-                >
+                <NavLink to="/login" className={navLinkClasses}>
                   Sign in
-                </Link>
-                <Link
+                </NavLink>
+                <NavLink
                   to="/register"
-                  className="rounded bg-amber px-3 py-2 font-semibold text-ink transition hover:bg-amber-soft"
+                  className={({ isActive }: { isActive: boolean }) =>
+                    [
+                      'rounded px-3 py-2 font-semibold transition',
+                      isActive
+                        ? 'bg-amber-soft text-ink'
+                        : 'bg-amber text-ink hover:bg-amber-soft',
+                    ].join(' ')
+                  }
                 >
                   Create account
-                </Link>
+                </NavLink>
               </>
             ) : null}
           </nav>
         </div>
       </header>
 
-      <main id="main" className="flex-1">
+      <main id="main" className="flex-1 focus:outline-none">
         <Outlet />
       </main>
 
@@ -115,6 +120,8 @@ export function Layout() {
           <p>No investment advice. Learn at your own pace.</p>
         </div>
       </footer>
+
+      <PwaManager />
     </div>
   )
 }

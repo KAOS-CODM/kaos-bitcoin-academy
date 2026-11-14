@@ -98,19 +98,27 @@ export function Lesson() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <nav aria-label="Breadcrumb" className="text-sm text-muted">
-        <Link to="/courses" className="hover:text-parchment">
-          Courses
-        </Link>
-        <span aria-hidden="true"> / </span>
-        <Link to={`/courses/${course.slug}`} className="hover:text-parchment">
-          {course.title}
-        </Link>
-        {moduleTitle ? (
-          <>
-            <span aria-hidden="true"> / </span>
-            <span>{moduleTitle}</span>
-          </>
-        ) : null}
+        <ol className="flex flex-wrap items-center gap-1">
+          <li>
+            <Link to="/courses" className="hover:text-parchment">
+              Courses
+            </Link>
+          </li>
+          <li aria-hidden="true">/</li>
+          <li>
+            <Link to={`/courses/${course.slug}`} className="hover:text-parchment">
+              {course.title}
+            </Link>
+          </li>
+          {moduleTitle ? (
+            <>
+              <li aria-hidden="true">/</li>
+              <li aria-current="page" className="text-parchment">
+                {moduleTitle}
+              </li>
+            </>
+          ) : null}
+        </ol>
       </nav>
 
       <header className="mt-6">

@@ -32,11 +32,17 @@ export function SimulationLayout({ meta, children }: SimulationLayoutProps) {
 
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <nav aria-label="Breadcrumb" className="text-sm text-muted">
-          <Link to="/playground" className="hover:text-parchment">
-            Bitcoin Playground
-          </Link>
-          <span aria-hidden="true"> / </span>
-          <span className="text-parchment">{meta.title}</span>
+          <ol className="flex flex-wrap items-center gap-1">
+            <li>
+              <Link to="/playground" className="hover:text-parchment">
+                Bitcoin Playground
+              </Link>
+            </li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" className="text-parchment">
+              {meta.title}
+            </li>
+          </ol>
         </nav>
 
         <header className="mt-6">

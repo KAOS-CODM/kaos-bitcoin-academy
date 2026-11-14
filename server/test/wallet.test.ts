@@ -545,11 +545,12 @@ test('the wallet page stays protected and is linked from the main navigation and
   const layoutSource = read('client/src/components/Layout.tsx')
   assert.match(
     layoutSource,
-    /<nav aria-label="Main" className="flex flex-wrap items-center gap-2 text-sm">/,
+    /<nav[\s\S]{0,80}aria-label="Main"[\s\S]{0,300}flex-wrap/,
+    'The main navigation must stay a labelled, wrapping element so it works on small screens',
   )
   assert.match(
     layoutSource,
-    /!isLoading && user \?[\s\S]*?to="\/wallet"[\s\S]*?>\s*Wallet\s*<\/Link>/,
+    /!isLoading && user \?[\s\S]*?to="\/wallet"[\s\S]*?>\s*Wallet\s*<\/NavLink>/,
     'Signed-in learners must have a direct Wallet link in the main navigation',
   )
 

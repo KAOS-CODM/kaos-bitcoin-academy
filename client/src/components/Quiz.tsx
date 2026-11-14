@@ -169,13 +169,24 @@ export function QuizRunner({
                           className="mt-1 h-4 w-4 accent-amber"
                         />
                         <span>{option.text}</span>
+                        {/* The border colour alone must not carry the result, so the
+                            outcome is also stated in text for assistive technology. */}
+                        {isCorrect ? (
+                          <span className="sr-only">— correct answer</span>
+                        ) : isWrongSelection ? (
+                          <span className="sr-only">— your answer, not correct</span>
+                        ) : null}
                       </label>
                     )
                   })}
                 </div>
               </fieldset>
               {feedback ? (
-                <div className="mt-3 rounded-md border border-line/70 bg-ink/40 p-3 text-sm leading-6">
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="mt-3 rounded-md border border-line/70 bg-ink/40 p-3 text-sm leading-6"
+                >
                   <p className={feedback.correct ? 'font-semibold text-amber' : 'font-semibold text-danger'}>
                     {feedback.correct ? 'Correct' : 'Not quite'}
                   </p>
@@ -262,6 +273,7 @@ export function QuizRunner({
             type="button"
             onClick={onSubmit}
             disabled={!allAnswered || submit.isPending}
+            aria-busy={submit.isPending}
             className="rounded-md bg-amber px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-amber-soft disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submit.isPending ? 'Checking…' : 'Submit answers'}

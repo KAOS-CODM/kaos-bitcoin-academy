@@ -16,6 +16,7 @@
 
 html {
   color-scheme: dark;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -23,6 +24,8 @@ body {
   color: var(--color-parchment);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  /* Long words and code samples must never force a horizontal scroll on a phone. */
+  overflow-wrap: break-word;
 }
 
 ::selection {
@@ -32,7 +35,55 @@ body {
 
 a:focus-visible,
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
   outline: 2px solid var(--color-amber);
   outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* A keyboard focus ring must never be removed, but a pointer press should not leave one. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/*
+ * Reduced motion.
+ *
+ * A learner who has asked the operating system for less motion gets no smooth scrolling,
+ * no spinning loaders, and no transitions. The loaders still occupy their space and still
+ * carry their text, so nothing becomes invisible or unreadable.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * A visible, high-contrast focus ring on the dark surface.
+ *
+ * The amber ring keeps a 3:1 contrast ratio against the ink background, which is what
+ * WCAG 2.2 asks for a focus indicator.
+ */
+@media (forced-colors: active) {
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 3px solid CanvasText;
+  }
 }

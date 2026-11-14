@@ -49,6 +49,10 @@ export function createApp(options: AppOptions = {}): Express {
               frameAncestors: ["'none'"],
               baseUri: ["'self'"],
               formAction: ["'self'"],
+              // The application shell is cached by a same-origin service worker, and the
+              // web app manifest is served from this origin. Nothing else is allowed.
+              workerSrc: ["'self'"],
+              manifestSrc: ["'self'"],
             },
           }
         : false,
@@ -108,6 +112,22 @@ export function createApp(options: AppOptions = {}): Express {
       express.static(clientDist, {
         index: false,
         maxAge: config.isProd ? '1h' : 0,
+        setHeaders: (res, filePath) => {
+          if (!config.isProd) return
+
+          // The shell and the service worker must always be revalidated. A cached shell
+          // would point at asset names that a new deployment no longer serves, and a
+          // cached worker would delay the update prompt.
+          if (filePath.endsWith('index.html') || filePath.endsWith('sw.js')) {
+            res.setHeader('Cache-Control', 'no-cache')
+            return
+          }
+
+          // Build assets carry a content hash in their name, so they can be kept forever.
+          if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+          }
+        },
       }),
     )
     app.use((req, res, next) => {
