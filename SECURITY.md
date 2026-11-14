@@ -121,12 +121,17 @@ listed so that a reporter can tell the difference between a designed boundary an
 | In scope | Out of scope |
 | --- | --- |
 | The web application in this repository | Third-party services, including relays, the learner's wallet, and OpenRouter |
-| The deployed server configuration | Denial of service against a free-tier host, or the cost of a third party's service |
+| The deployed server configuration at `kaos-bitcoin-academy.onrender.com` | Denial of service against a free-tier host, or the cost of a third party's service |
 | A learner's own wallet | The learner's own wallet software, keys, or seed phrase |
 | The build and deployment tooling | Vulnerabilities in dependencies that have no exploitable path through this application |
 
 **A finding that requires a user to hand over their seed phrase, or that depends on a
 third-party wallet service being malicious, is not a vulnerability in this project.**
+
+**The live deployment is a production service.** A report that is only reproducible against
+the deployed instance is still welcome, but please do not test against it aggressively:
+repeated requests can wake a sleeping free instance and add load to a shared host. Prefer a
+local reproduction, and say so in the report if the live service is genuinely required.
 
 ---
 

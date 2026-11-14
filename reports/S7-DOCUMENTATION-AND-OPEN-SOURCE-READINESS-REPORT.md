@@ -122,7 +122,7 @@ a matching table of contents.
 
 | Section | Status | Notes |
 | --- | --- | --- |
-| A. Project identity | **Done** | Name, tagline, description, hackathon context, repository and Devpost links. **No deployment URL is claimed** — the application is not deployed, and the temporary Cloudflare Quick Tunnel is explicitly not presented as one |
+| A. Project identity | **Done** | Name, tagline, description, hackathon context, repository and Devpost links, and the live Render URL. *Updated later in this phase, once the owner confirmed the permanent deployment URL.* |
 | B. The problem | **Done** | Three concrete barriers plus the regional context. No invented research statistics |
 | C. Our solution | **Done** | The learning loop, the real course/lesson/quiz/XP figures with a per-course status table, the Playground, and the wallet practice |
 | D. Core features | **Done** | Every feature verified against source before being claimed |
@@ -134,8 +134,8 @@ a matching table of contents.
 | J. Security by design | **Done** | Twelve control areas, each traced to code. States plainly that **no formal audit has occurred** |
 | K. PWA and offline | **Done** | Manifest, registration, caching table, offline fallback, update acceptance, and what offline explicitly does not enable |
 | L. Testing and QA | **Done** | Verified commands, the build-before-test warning, and the coverage map. The 305 figure is framed as point-in-time |
-| M. Deployment | **Done** | Prominent link to `./DEPLOYMENT.md`, architecture summary, requirements table, and an explicit "not deployed yet" statement |
-| N. Constraints and limitations | **Done** | Persistence/session, external wallet, network, offline, outstanding deployment, and content limits — all confirmed against the repository |
+| M. Deployment | **Done** | Prominent link to `./DEPLOYMENT.md`, the live Render URL and service settings, architecture summary, requirements table, a record of what was verified in production over HTTP, and an explicit statement that browser-level verification is still outstanding. *Updated later in this phase.* |
+| N. Constraints and limitations | **Done** | Persistence/session, external wallet, network, offline, deployment, and content limits — all confirmed against the repository |
 | O. Roadmap | **Done** | Completed / In progress / Planned, with completion evidence |
 | P. Hackathon alignment | **Done** | The five judging criteria in the requested table format, with no claims about measured impact or reach |
 | Q. License and contribution | **Done** | See §6 |
@@ -260,10 +260,14 @@ with a comment explaining why the root package alone is not enough.
 
 ### Render
 
-**Render is mentioned as the intended hosting target, and the guide explicitly states the
-application is not deployed.** No Render-specific configuration, environment variable, or
-`render.yaml` was invented. The guide's start command, build command, and health-check path
-are all derived from the actual scripts.
+**The application is deployed on Render.** This section was written before the deployment
+existed and was updated once the owner confirmed the permanent URL and the service settings.
+
+The guide now documents the real service — provider, type, name, repository, branch, root
+directory, public URL, plan, the exact build command, the start command, and the health-check
+path — and explains each of them. No `render.yaml` was invented and no Render service
+setting was changed. The build and start commands are derived from the actual package
+scripts, and the health-check path was confirmed against the live service.
 
 ---
 
@@ -337,8 +341,9 @@ them is a separate content decision. Two notes for your decision:
 | **No `SECURITY.md` / `CONTRIBUTING.md`** | Reviewers look for them | **Resolved.** Both created; the README links to both |
 | **No `CODE_OF_CONDUCT.md`** | Expected of a public project | **Outstanding.** It needs a named enforcement contact, which does not exist yet. It was deliberately not created with a placeholder address |
 | **Empty root documentation files** | `CHANGELOG.md` in particular renders as an empty page on GitHub | Decide whether to populate them or remove them |
-| **No deployment URL** | The README cannot link a live instance | Deploy first, then add the permanent URL. **The Cloudflare Quick Tunnel must not be used for this** |
+| **No deployment URL** | — | **Resolved.** The permanent Render URL `https://kaos-bitcoin-academy.onrender.com` was confirmed by the owner and is documented in `README.md` and `DEPLOYMENT.md`. The Cloudflare Quick Tunnel is not used anywhere |
 | **Browser rendering unverified** | The README's appearance on GitHub desktop and mobile was not machine-checked | Open the rendered README once after pushing |
+| **Production browser verification outstanding** | The live Render service was verified over HTTP only — routes, API, headers, and cache behaviour. Sign-in, the dashboard, the quiz flow, the PWA install, and the wallet practice have **not** been exercised in a real browser against the live URL | Run a browser pass against `https://kaos-bitcoin-academy.onrender.com` |
 | **The AI Tutor's user-facing behaviour** | The README describes the tutor's configuration, but no screenshot shows it | Include a tutor screenshot when one is captured, if the tutor is enabled for the submission |
 
 ---

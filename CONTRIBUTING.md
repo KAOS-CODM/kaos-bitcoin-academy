@@ -137,6 +137,22 @@ If you change behaviour, update the affected documentation in the same pull requ
 The requirement specification is the one document you must **not** edit. It is frozen and
 integrity-checked; if it needs to change, that is an explicit decision for the project owner.
 
+### The live deployment is not a test environment
+
+The academy runs in production at
+[kaos-bitcoin-academy.onrender.com](https://kaos-bitcoin-academy.onrender.com) on Render's
+free plan.
+
+- **Do not trigger a deployment.** Merging to `main` deploys the live service; changing a
+  Render setting is a separate, explicit decision for the project owner.
+- **Do not run a live wallet operation, a payment, an invoice, or a settlement lookup against
+  the deployed service** unless the owner has specifically authorised it.
+- **Do not run a destructive or exploratory operation against the production database.**
+- A pull request that changes behaviour is **not** verified by deploying it. Verify it
+  locally with the commands above.
+- The free instance sleeps when idle, so a request to the live URL can be slow after a quiet
+  period. That is the free tier, not a fault.
+
 ---
 
 ## Style

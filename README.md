@@ -16,6 +16,7 @@ money or their keys.
 [![Node](https://img.shields.io/badge/node-%E2%89%A520-5FA04E?style=flat-square)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.9-3178C6?style=flat-square)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/react-19-61DAFB?style=flat-square)](https://react.dev/)
+[![Live](https://img.shields.io/badge/live-kaos--bitcoin--academy.onrender.com-f5b942?style=flat-square)](https://kaos-bitcoin-academy.onrender.com)
 [![License](https://img.shields.io/badge/license-MIT-f5b942?style=flat-square)](./LICENSE)
 
 ---
@@ -52,7 +53,7 @@ money or their keys.
 | **Developer** | Isaiah Yemi Adelowo ([KAOS-CODM on Devpost](https://devpost.com/KAOS-CODM)) |
 | **Hackathon** | [Dakar Bitcoin Hack 2026 by BTrust](https://dakar-bitcoin-hack-2026.devpost.com/) |
 | **Deadline** | 20 November 2026, 9:00 PM GMT+1 |
-| **Live deployment** | *Not yet deployed.* See [Deployment](#m-deployment). |
+| **Live deployment** | **[kaos-bitcoin-academy.onrender.com](https://kaos-bitcoin-academy.onrender.com)** — hosted on Render. See [Deployment](#m-deployment). |
 | **Cost to run** | Zero. Free tiers only — no paid services, subscriptions, or APIs. |
 
 **What it is.** A single-origin web application: a React single-page app, an Express API, and
@@ -367,7 +368,7 @@ unused".
 | --- | --- |
 | Single-origin Node.js process | Serves the JSON API and the built client from one process |
 | Express static hosting | Serves `client/dist`, with the SPA fallback for client-side routes |
-| Render | The intended hosting target. **Not yet deployed.** |
+| Render | The hosting provider. A free-plan Node.js Web Service running the application at [kaos-bitcoin-academy.onrender.com](https://kaos-bitcoin-academy.onrender.com) |
 
 ---
 
@@ -854,30 +855,95 @@ The full guide covers prerequisites, environment variables, the build, the run p
 health check, routing and cache behaviour, cookies and cross-site requests, the security
 headers, the service worker, rollback, and the zero-budget constraint.
 
+### Live application
+
+**The academy is deployed and running on Render:**
+
+### **[https://kaos-bitcoin-academy.onrender.com](https://kaos-bitcoin-academy.onrender.com)**
+
+| Setting | Value |
+| --- | --- |
+| Hosting provider | **Render** |
+| Service type | Node.js Web Service |
+| Service name | `kaos-bitcoin-academy` |
+| Repository | `KAOS-CODM/kaos-bitcoin-academy` |
+| Branch | `main` |
+| Root directory | Repository root |
+| Public URL | `https://kaos-bitcoin-academy.onrender.com` |
+| Instance plan | Free |
+| Build command | `npm ci --include=dev --prefix server && npm ci --include=dev --prefix client && npm run build` |
+| Start command | `npm start` |
+| Health check path | `/api/health` |
+
 ### Architecture summary
 
-The academy is a **single-origin Node.js process**. One Express server serves both the JSON
-API under `/api` and the built client from `client/dist`, with an SPA fallback so that a
-client-side route such as `/courses` works on a direct visit. There is no separate frontend
-host, no reverse-proxy rule to get wrong, and no CORS configuration to maintain.
+The academy is a **single-origin Node.js process**, and that is exactly how it is hosted. One
+Express server serves both the JSON API under `/api` and the built client from `client/dist`,
+with an SPA fallback so that a client-side route such as `/courses` or `/dashboard` works on a
+direct visit. The frontend and the API therefore share the Render service's origin: there is
+no separate frontend host, no reverse-proxy rule to get wrong, and no CORS configuration to
+maintain.
 
-The intended hosting target is **Render**. It is free for a service of this size, and the
-server is a plain Node.js process with a single start command, which is what Render expects.
+The wallet path is unaffected by the hosting arrangement. Nostr Wallet Connect requests run
+**from the learner's browser** to the wallet service over the approved relays. The wallet
+connection never passes through the academy backend, and the Render service holds no wallet
+credential, balance, or transaction history.
 
-> **The application is not deployed yet.** No permanent public URL exists, and none is
-> claimed here. A temporary Cloudflare Quick Tunnel URL is not a production URL and is not
-> presented as one.
+### What has been verified in production
+
+These were checked directly against the live service:
+
+| Check | Result |
+| --- | --- |
+| `GET /` | 200, serves the application shell |
+| `GET /dashboard` | 200, serves the same application shell — the SPA fallback works |
+| `GET /courses` | 200, serves the same application shell |
+| `GET /api/health` | 200, `{"status":"ok","db":"up"}` — the production database is reachable |
+| `GET /api/courses` | 200, returns the seeded course catalogue with per-course progress |
+| `GET /api/auth/me` | 200, `{"user":null}` for a visitor with no session |
+| `GET /api/dashboard` | 401 `UNAUTHORIZED` without a session — the authorisation boundary holds |
+| `GET /manifest.webmanifest`, `GET /sw.js`, `/icons/*` | 200, with the correct content types |
+| Security headers | The full production Content-Security-Policy is present, with `connect-src` limited to the two approved relays |
+| Cache behaviour | `/sw.js` is `no-cache`, hashed assets are `immutable`, and the shell is `max-age=0` |
+
+### What has **not** been verified yet
+
+**No browser-level verification has been performed against the live deployment.** The checks
+above were HTTP-level. The following remain outstanding and should be completed before the
+project is presented as fully production-proven:
+
+- Signing in, signing out, and session persistence across a reload, in a real browser.
+- The dashboard rendering for a signed-in learner with real progress data.
+- The quiz flow, the progress writes, and the XP awards, end to end in a browser.
+- The AI Tutor, if it is enabled on the deployment.
+- The wallet practice against a real Lightning wallet. **No live wallet request has been
+  performed** — not on the deployment and not during development.
+- The PWA install prompt, the service worker taking over, and the offline fallback, in a real
+  browser.
+- A screen-reader pass and a keyboard-only pass against the live site.
+- Behaviour on a real mobile device and on a slow or metered connection.
+
+> **The free plan spins down.** Render's free instances sleep after inactivity, so the first
+> request after a quiet period can take noticeably longer while the service wakes. That is a
+> property of the free tier, not a fault in the application, and it is not a
+> production-grade uptime guarantee.
 
 ### What a deployment needs
 
 | Requirement | Detail |
 | --- | --- |
 | Runtime | Node.js 20 or newer |
-| Start command | `npm start` (after `npm run build`) |
-| Build command | `npm install --prefix client && npm install --prefix server && npm run build` |
+| Build command | `npm ci --include=dev --prefix server && npm ci --include=dev --prefix client && npm run build` |
+| Start command | `npm start` |
 | Health check path | `/api/health` — returns `{"status":"ok","db":"up"}` |
 | Environment | `MONGODB_URI` and `SESSION_SECRET` are required; `APP_ORIGIN` should match the public origin |
 | Database | MongoDB Atlas Free tier, or any MongoDB instance |
+
+The build command installs each application's dependencies **including its dev
+dependencies**, because both the TypeScript compiler and the Vite build tool are
+development dependencies. A plain `npm install` at the repository root is not sufficient: the
+root package is a scripts-only package with no npm workspaces, and `client/` and `server/`
+each maintain their own manifest and lockfile.
 
 Because sessions are stored in MongoDB, more than one server process can serve the same
 sessions. The AI Tutor needs `AI_ENABLED=true` and `OPENROUTER_API_KEY`; without them the
@@ -928,12 +994,18 @@ Honest limitations, confirmed against the repository.
 
 ### Deployment requirements still outstanding
 
-- No permanent deployment exists yet. Hosting, a public URL, and the environment variables are
-  still to be configured.
+- The application **is** deployed, at
+  [kaos-bitcoin-academy.onrender.com](https://kaos-bitcoin-academy.onrender.com), on Render's
+  free plan. The free plan sleeps after inactivity, so the first request after a quiet period
+  can be slow while the instance wakes.
+- **Browser-level verification of the live deployment is still outstanding.** The service,
+  its API, its security headers, and its cache behaviour have been checked over HTTP, but
+  sign-in, the dashboard, the quiz flow, the PWA install, and the wallet practice have not
+  been exercised in a real browser against the live URL.
+- A custom domain has not been configured; the service uses the `onrender.com` hostname.
 - A split deployment — the client and the API on different origins — would need a code change
   to the session cookie policy (`sameSite=none` plus explicit CORS with credentials). The
   single-origin setup avoids this entirely and is the recommended topology.
-- DNS for the intended domain has not been configured.
 
 ### Content
 
@@ -998,11 +1070,12 @@ project against the judging criteria.
 | **Usefulness and local impact** | Beginner-first Bitcoin education, free of charge, built mobile-first for learners on metered or intermittent data. The curriculum is sequenced for a reader with no background in cryptography, finance, or programming, and every technical term is explained where it first appears. The wallet practice lets a learner use their **own** wallet, so no custodial risk and no deposit is required to learn. |
 | **Security by design** | The wallet connection never reaches the academy server: NIP-47 requests run browser-to-wallet over NIP-44. Connection URIs are validated locally and kept in memory only. Strict Content-Security-Policy with an explicit two-relay `connect-src`. Argon2id password hashing, MongoDB-backed sessions, `__Host-` prefixed secure cookies, Zod validation on every mutating request, and rate limiting on authentication, quizzes, and the tutor. A service worker that refuses to cache API responses, cross-origin requests, or state-changing operations. Payment success is only ever reported from wallet evidence, never assumed. |
 | **UX/UI quality** | A consistent dark theme, a responsive layout from 320 px upward, keyboard-visible focus on every control, announced validation errors, text alternatives for colour-only status, full reduced-motion support, an installable PWA with an offline fallback and a user-accepted update flow, and route-level code splitting that keeps the first load light. |
-| **Working MVP** | A complete, working learning platform: eight courses, twenty-two lessons, thirty quizzes, progress, XP, achievements, an account dashboard, six Playground simulations, an optional AI tutor, and a **real** Lightning wallet integration covering `get_info`, `get_balance`, `list_transactions`, `pay_invoice`, `make_invoice`, and `lookup_invoice`. 305 automated tests pass; both type checks and the production build are clean. |
+| **Working MVP** | A complete, working learning platform: eight courses, twenty-two lessons, thirty quizzes, progress, XP, achievements, an account dashboard, six Playground simulations, an optional AI tutor, and a **real** Lightning wallet integration covering `get_info`, `get_balance`, `list_transactions`, `pay_invoice`, `make_invoice`, and `lookup_invoice`. It is **live at [kaos-bitcoin-academy.onrender.com](https://kaos-bitcoin-academy.onrender.com)**, serving the course catalogue and API from the live database. 305 automated tests pass; both type checks and the production build are clean. |
 | **Clear pitch and documentation** | This README — problem, solution, features, architecture, setup, wallet guide, security, deployment, and limitations — plus a [deployment guide](./DEPLOYMENT.md), a Mermaid architecture diagram, a verified command reference, and the test suite that backs each claim. The project ships its own implementation and audit reports in `reports/`, and the requirement specification and its integrity hashes are in the repository. |
 
 The project is honest about what is not yet done: the later courses open with their first
-module, the AI tutor is optional, and no permanent deployment exists yet.
+module, the AI tutor is optional, and browser-level verification of the live deployment is
+still outstanding.
 
 ---
 
