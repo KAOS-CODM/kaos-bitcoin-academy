@@ -27,7 +27,7 @@ money or their keys.
 - [The problem](#b-the-problem)
 - [Our solution](#c-our-solution)
 - [Core features](#d-core-features)
-- [Screenshots and demonstration](#e-screenshots-and-demonstration)
+- [Live Demonstration](#live-demonstration)
 - [Technology stack](#f-technology-stack)
 - [Architecture](#g-architecture)
 - [Getting started](#h-getting-started)
@@ -250,46 +250,9 @@ academy is fully useful without it.
 
 ---
 
-## E. Screenshots and demonstration
+## Live Demonstration
 
-> **⚠️ Placeholder — screenshots are not yet included in this repository.**
->
-> The repository currently contains only the application icons
-> (`client/public/icons/`). **No genuine screenshots of the running application exist yet**,
-> and none have been fabricated for this README.
-
-Before submission, replace the table below with real captures of the running application.
-
-| To capture | Suggested file | What it should show |
-| --- | --- | --- |
-| Home page | `docs/screenshots/home.png` | The landing page and the "Start here" course grid |
-| Course catalogue | `docs/screenshots/courses.png` | The catalogue with course cards and progress bars |
-| Lesson reading view | `docs/screenshots/lesson.png` | A lesson with key terms and a reflection prompt |
-| Quiz feedback | `docs/screenshots/quiz.png` | A scored answer with the explanation and the XP award |
-| Learner dashboard | `docs/screenshots/dashboard.png` | Progress, XP, achievements, and resume link |
-| Bitcoin Playground | `docs/screenshots/playground.png` | One simulation, with the "fictional data" banner visible |
-| Wallet account dashboard | `docs/screenshots/wallet-dashboard.png` | Connection overview, balance, capabilities, and diagnostics |
-| Wallet connection help | `docs/screenshots/wallet-connect.png` | The approved-relay list and the NWC connection form |
-
-### Demonstration video
-
-> **⚠️ Placeholder — the demonstration video has not been recorded yet.**
->
-> **Target:** a 3–5 minute screen recording for the hackathon submission, hosted on the
-> Devpost project page.
->
-> Suggested structure:
->
-> 1. **0:00–0:30** — the problem: a beginner facing Bitcoin documentation.
-> 2. **0:30–1:30** — the courses: browse the catalogue, read the preview lesson.
-> 3. **1:30–2:15** — progress: sign in, complete a lesson, pass a knowledge check, earn XP.
-> 4. **2:15–3:30** — the wallet practice: connect a real wallet over NWC, read the balance
->    and transaction history, then make a small practice payment.
-> 5. **3:30–4:00** — the Playground simulation.
-> 6. **4:00–5:00** — mobile view, install as an app, and the offline behaviour.
->
-> The recording must use **zero real value**. The practice receive invoice is capped at
-> 100 satoshis for exactly this reason.
+[Watch the KAOS Bitcoin Academy Demo](https://youtu.be/U_bGXfOl2fY)
 
 ---
 
