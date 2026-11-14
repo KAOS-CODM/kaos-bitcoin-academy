@@ -12,10 +12,10 @@ export function WalletActivityCallout() {
         id="wallet-activity-heading"
         className="mt-2 text-xl font-semibold text-parchment sm:text-2xl"
       >
-        Try a read-only Lightning wallet connection
+        Try a Lightning wallet connection
       </h2>
       <p className="mt-3 text-sm leading-7 text-muted">
-        This is a read-only demonstration. You have just seen how a Lightning wallet authorizes
+        This is a guided practice. You have just seen how a Lightning wallet authorizes
         payments and how an invoice requests one. Nostr Wallet Connect (NWC) is a way for an app to
         ask a compatible wallet for information without holding your keys. Trying it here connects
         the topic to a real wallet interface.
@@ -32,8 +32,11 @@ export function WalletActivityCallout() {
         <div className="rounded-md border border-line bg-surface p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-amber">What</p>
           <p className="mt-1 text-sm leading-6 text-muted">
-            The Academy requests only <code>get_info</code>. It does not create an invoice, request
-            a payment, query a balance, or perform a transaction.
+            The Academy calls <code>get_info</code> when you connect. The account dashboard calls{' '}
+            <code>get_balance</code> and <code>list_transactions</code> only when you press the
+            matching button, and it never polls. If you start a payment or create an invoice in
+            the practice section, it calls <code>pay_invoice</code>, <code>make_invoice</code>, or{' '}
+            <code>lookup_invoice</code> for that action only.
           </p>
         </div>
         <div className="rounded-md border border-line bg-surface p-4">
@@ -71,7 +74,7 @@ export function WalletActivityCallout() {
         to="/wallet"
         className="mt-5 inline-block rounded-md bg-amber px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-amber-soft"
       >
-        Open the read-only wallet activity →
+        Open the wallet practice →
       </Link>
     </section>
   )

@@ -25,7 +25,14 @@ const ARRAY_FIELDS = {
   extensions: 64,
 } as const
 
-const SAFE_WALLET_CODES = new Set([
+/**
+ * NIP-47 error codes that may be shown to a learner.
+ *
+ * A wallet error code is wallet-supplied text. Only the codes in this fixed list are ever
+ * echoed back into the interface, so an unexpected code can never smuggle arbitrary content
+ * into the page.
+ */
+export const SAFE_WALLET_CODES = new Set([
   'UNAUTHORIZED',
   'NOT_IMPLEMENTED',
   'INSUFFICIENT_BALANCE',
@@ -38,6 +45,13 @@ const SAFE_WALLET_CODES = new Set([
   'PAYMENT_FAILED',
   'NOT_FOUND',
 ])
+
+import {
+  Nip47EnvelopeAdapter,
+  type Nip47EnvelopeMethod,
+  type Nip47RequestResult,
+  type Nip47Transport,
+} from './nwc-envelope'
 
 export class WalletError extends Error {
   constructor(message: string) {
@@ -251,6 +265,42 @@ export function sanitizeGetInfoResponse(value: unknown): SanitizedGetInfoRespons
   return result
 }
 
+/**
+ * Fixed, safe descriptions for the SDK's NIP-47 error classes.
+ *
+ * Every message here is a static string. None of them includes the SDK's own error
+ * message, which can contain relay URLs, event identifiers, or a stringified wallet
+ * response.
+ */
+const SDK_ERROR_MESSAGES: Readonly<Record<string, string>> = {
+  Nip47NetworkError:
+    'The approved relay could not be reached. Check the connection and try again. No sensitive details are displayed.',
+  Nip47PublishError:
+    'The approved relay did not accept the request. Check the connection and try again. No sensitive details are displayed.',
+  Nip47PublishTimeoutError:
+    'The approved relay did not accept the request in time. Check the connection and try again. No sensitive details are displayed.',
+  Nip47ReplyTimeoutError:
+    'The wallet did not answer in time. Check your wallet activity before trying again. No sensitive details are displayed.',
+  Nip47ResponseDecodingError:
+    "The wallet's reply could not be decrypted, so it was not accepted. No sensitive details are displayed.",
+  Nip47ResponseValidationError:
+    "The wallet's reply was not a valid get_info response, so it was not accepted. No sensitive details are displayed.",
+  Nip47UnsupportedEncryptionError:
+    'The wallet does not support a compatible encryption mode. No sensitive details are displayed.',
+}
+
+/**
+ * The SDK's NIP-47 errors all extend `Error` and none of them sets `name`, so every
+ * instance reports `name === 'Error'`. The constructor name is the only reliable
+ * discriminator between a wallet-reported error and a local relay, transport, or protocol
+ * failure.
+ */
+function sdkErrorClassName(error: unknown): string {
+  if (typeof error !== 'object' || error === null) return ''
+  const name = (error as { constructor?: { name?: unknown } }).constructor?.name
+  return typeof name === 'string' ? name : ''
+}
+
 export function describeWalletError(error: unknown): string {
   if (error instanceof WalletError) {
     return error.message
@@ -260,6 +310,26 @@ export function describeWalletError(error: unknown): string {
     typeof (error as { code?: unknown } | null)?.code === 'string'
       ? (error as { code: string }).code.toUpperCase()
       : ''
+
+  const sdkClass = sdkErrorClassName(error)
+
+  // Only a genuine wallet error may be reported as "the wallet returned <code>".
+  if (sdkClass === 'Nip47WalletError') {
+    if (SAFE_WALLET_CODES.has(code)) {
+      return `The wallet returned ${code}. No sensitive details are displayed.`
+    }
+    return 'The wallet reported an error. No sensitive details are displayed.'
+  }
+
+  const sdkMessage = SDK_ERROR_MESSAGES[sdkClass]
+  if (sdkMessage) {
+    return sdkMessage
+  }
+
+  // Any other SDK-side NIP-47 failure is local to the request, not a wallet answer.
+  if (sdkClass.startsWith('Nip47')) {
+    return 'The wallet request did not complete. No sensitive details are displayed. Check the connection and try again.'
+  }
 
   if (SAFE_WALLET_CODES.has(code)) {
     return `The wallet returned ${code}. No sensitive details are displayed.`
@@ -278,14 +348,16 @@ export function describeWalletError(error: unknown): string {
 }
 
 /**
- * The SDK's getInfo() failure path calls console.error with the caught error.
- * Suppress console methods only for the duration of the request so an SDK
- * failure cannot print connection details into DevTools.
+ * Run a wallet call with console output suppressed.
+ *
+ * The SDK's failure paths call console.error with the caught error, and a validation error
+ * can contain a stringified response. Suppressing console methods for the duration of the
+ * call keeps connection details and wallet payloads out of DevTools.
  */
-export async function requestGetInfo(
-  client: Pick<NwcClientLike, 'getInfo'>,
+export async function withSuppressedConsole<T>(
+  run: () => Promise<T>,
   target: ConsoleTarget = console as unknown as ConsoleTarget,
-): Promise<unknown> {
+): Promise<T> {
   const originals = new Map<ConsoleMethod, (...args: unknown[]) => void>()
 
   for (const method of CONSOLE_METHODS) {
@@ -294,13 +366,45 @@ export async function requestGetInfo(
   }
 
   try {
-    return await client.getInfo()
+    return await run()
   } finally {
     for (const method of CONSOLE_METHODS) {
       const original = originals.get(method)
       if (original) target[method] = original
     }
   }
+}
+
+/**
+ * The SDK's getInfo() failure path calls console.error with the caught error.
+ * Suppress console methods only for the duration of the request so an SDK
+ * failure cannot print connection details into DevTools.
+ */
+export async function requestGetInfo(
+  client: Pick<NwcClientLike, 'getInfo'>,
+  target: ConsoleTarget = console as unknown as ConsoleTarget,
+): Promise<unknown> {
+  return withSuppressedConsole(() => client.getInfo(), target)
+}
+
+/**
+ * Check at runtime that the connected client exposes the public members the NIP-47 adapter
+ * needs. This is a structural check of public API only; nothing private is inspected.
+ */
+function hasTransportMembers(client: unknown): client is Nip47Transport {
+  if (typeof client !== 'object' || client === null) return false
+  const candidate = client as Partial<Nip47Transport>
+  return (
+    Array.isArray(candidate.relayUrls) &&
+    typeof candidate.walletPubkey === 'string' &&
+    typeof candidate.encrypt === 'function' &&
+    typeof candidate.decrypt === 'function' &&
+    typeof candidate.signEvent === 'function' &&
+    typeof candidate.pool === 'object' &&
+    candidate.pool !== null &&
+    typeof candidate.pool.subscribe === 'function' &&
+    typeof candidate.pool.publish === 'function'
+  )
 }
 
 /**
@@ -314,7 +418,6 @@ export class WalletClientSession {
   constructor(
     private readonly createClient: (connection: NwcConnection) => NwcClientLike,
   ) {}
-
   get active(): boolean {
     return this.client !== null
   }
@@ -346,6 +449,37 @@ export class WalletClientSession {
       if (parsed) parsed.secret = ''
       client = null
     }
+  }
+
+  /**
+   * Send one NIP-47 request through the strict envelope adapter.
+   *
+   * The adapter validates `result_type`, error/result consistency, and the method-specific
+   * response shape before any result is accepted. Only the approved relay list is used.
+   */
+  async requestEnvelope(
+    method: Nip47EnvelopeMethod,
+    params: unknown,
+    options: { replyTimeoutMs?: number } = {},
+  ): Promise<Nip47RequestResult> {
+    const client = this.client
+    if (!client) {
+      return { status: 'failed', kind: 'stale' }
+    }
+
+    if (!hasTransportMembers(client)) {
+      return { status: 'failed', kind: 'encryption-unavailable' }
+    }
+
+    const attempt = this.attempt
+    const adapter = new Nip47EnvelopeAdapter({
+      transport: client,
+      allowedRelays: APPROVED_RELAYS,
+      replyTimeoutMs: options.replyTimeoutMs,
+      isStale: () => attempt !== this.attempt,
+    })
+
+    return withSuppressedConsole(() => adapter.request(method, params))
   }
 
   disconnect(): void {

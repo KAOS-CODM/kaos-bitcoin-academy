@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>S5 NWC get_info Validation — Local Only</title>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <p class="eyebrow">KAOS Bitcoin Academy · S5 validation</p>
+        <h1>Coinos NWC <code>get_info</code> check</h1>
+        <p class="lede">
+          A local-only, zero-funds harness for checking whether a fresh Coinos NWC
+          connection can answer <code>get_info</code>.
+        </p>
+      </header>
+
+      <section class="notice" role="note" aria-label="Scope and safety">
+        <strong>Scope:</strong> this page calls only <code>get_info</code>. It has no
+        payment, invoice, balance, QR, or reconnection feature. Do not use a wallet
+        that holds funds. The connection URI is handled in this tab only; it is not
+        sent to a backend, logged, or stored in browser storage.
+      </section>
+
+      <section class="card">
+        <h2>Connect</h2>
+        <form id="connect-form" autocomplete="off">
+          <label for="nwc-uri">Fresh Coinos NWC connection URI</label>
+          <input
+            id="nwc-uri"
+            name="nwc-connection-uri"
+            type="password"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-describedby="uri-help"
+          />
+          <p id="uri-help" class="help">
+            Paste the URI directly into this field. Never paste it into chat, a
+            terminal command, an environment file, or a report. Only the approved
+            relay <code>wss://relay.coinos.io</code> is accepted.
+          </p>
+          <div class="actions">
+            <button id="connect-button" type="submit">
+              Connect and request <code>get_info</code>
+            </button>
+            <button id="disconnect-button" class="secondary" type="button">
+              Disconnect and clear
+            </button>
+          </div>
+        </form>
+        <p class="meta">
+          Approved relay: <code>wss://relay.coinos.io</code><br />
+          SDK: <code>@getalby/sdk 9.0.0</code> · permitted operation:
+          <code>get_info</code> only
+        </p>
+      </section>
+
+      <section class="card" aria-live="polite">
+        <h2>Status</h2>
+        <p id="status" class="status" data-kind="idle">
+          No connection. The page has not contacted a wallet.
+        </p>
+      </section>
+
+      <section id="response-section" class="card" hidden>
+        <h2>Wallet-reported <code>get_info</code> response</h2>
+        <p class="help">
+          Only an allow-listed set of response fields is displayed. Unexpected
+          fields are discarded.
+        </p>
+        <table>
+          <tbody id="response-body"></tbody>
+        </table>
+        <details>
+          <summary>Raw allow-listed JSON</summary>
+          <pre id="response-json"></pre>
+        </details>
+      </section>
+
+      <footer class="footer">
+        <p>
+          Local validation harness. JavaScript strings cannot be reliably zeroized;
+          disconnecting drops the client reference and clears the input and displayed
+          state, but does not claim physical memory erasure.
+        </p>
+      </footer>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -453,11 +453,15 @@ test('wallet source keeps credentials out of storage, logs, and the backend', ()
   assert.match(walletSource, /reported capabilities, not verified functionality/)
   assert.match(walletSource, /Method used by the Academy/)
   assert.match(walletSource, /Methods reported by the connected wallet/)
-  assert.match(walletSource, /has not called or tested/)
-  assert.match(walletSource, /does not request payments/)
+  assert.match(walletSource, /has not verified that the wallet actually supports them/)
+  assert.match(
+    walletSource,
+    /requests a balance or a transaction history only when you press\s+the matching button/,
+  )
+  assert.match(walletSource, /never polls and never runs on its own/)
   assert.match(walletSource, /does not prove that it contains funds/)
   assert.match(walletSource, /Optional practical activity/)
-  assert.match(walletSource, /read-only demonstration/i)
+  assert.match(walletSource, /guided practice/i)
   assert.match(walletSource, /does not create an invoice/)
   assert.match(walletSource, /does not unlock/)
   assert.match(walletSource, /seed phrase or private key/)
@@ -557,9 +561,12 @@ test('the wallet page stays protected and is linked from the main navigation and
   const activitySource = read('client/src/features/wallet/WalletActivityCallout.tsx')
   assert.match(activitySource, /to="\/wallet"/)
   assert.match(activitySource, /Optional practical activity/)
-  assert.match(activitySource, /read-only demonstration/i)
-  assert.match(activitySource, /only <code>get_info<\/code>/)
-  assert.match(activitySource, /does not create an invoice/)
+  assert.match(activitySource, /guided practice/i)
+  assert.match(activitySource, /calls <code>get_info<\/code> when you connect/)
+  assert.match(
+    activitySource,
+    /<code>get_balance<\/code> and <code>list_transactions<\/code> only when you press the\s+matching button, and it never polls\./,
+  )
   assert.match(activitySource, /This activity is optional/)
   assert.match(activitySource, /seed phrase or private key/)
   assert.match(activitySource, /does not unlock/)

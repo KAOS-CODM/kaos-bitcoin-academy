@@ -10,7 +10,15 @@ import {
   describeWalletError,
   type SanitizedGetInfoResponse,
 } from '../features/wallet/nwc'
-import { WalletMethods } from '../features/wallet/WalletMethods'
+import { WalletDashboard } from '../features/wallet/WalletAccountDashboard'
+import type { AccountConnectionState } from '../features/wallet/account'
+import { PaymentPanel } from '../features/wallet/PaymentPanel'
+import { ReceivePanel } from '../features/wallet/ReceivePanel'
+import {
+  PRACTICE_DEFAULT_AMOUNT_SATS,
+  PRACTICE_INVOICE_EXPIRY_SECONDS,
+  PRACTICE_MAX_AMOUNT_SATS,
+} from '../features/wallet/payment'
 
 type StatusKind = 'idle' | 'connecting' | 'connected' | 'error' | 'disconnected'
 
@@ -23,15 +31,6 @@ const IDLE_STATUS: WalletStatus = {
   kind: 'idle',
   message: 'No wallet connected. Connecting a wallet is optional.',
 }
-
-const FIELD_ROWS: Array<[keyof SanitizedGetInfoResponse, string]> = [
-  ['alias', 'Alias'],
-  ['network', 'Network'],
-  ['pubkey', 'Wallet public key'],
-  ['color', 'Color'],
-  ['block_height', 'Block height'],
-  ['block_hash', 'Block hash'],
-]
 
 function createSession(): WalletClientSession {
   return new WalletClientSession(
@@ -60,56 +59,16 @@ function statusClasses(kind: StatusKind): string {
   }
 }
 
-function WalletInfo({ info }: { info: SanitizedGetInfoResponse }) {
-  const rows = FIELD_ROWS.flatMap(([key, label]) => {
-    const value = info[key]
-    if (value === undefined) return []
-    return [{ key, label, value: String(value) }]
-  })
-
-  return (
-    <section
-      aria-labelledby="wallet-info-heading"
-      className="mt-6 rounded-lg border border-line bg-surface p-5"
-    >
-      <h2 id="wallet-info-heading" className="text-lg font-semibold text-parchment">
-        Wallet-reported information
-      </h2>
-      <p className="mt-2 text-sm leading-6 text-muted">
-        These values were returned by your wallet for <code>get_info</code>. They describe the
-        wallet&apos;s report, not a payment or balance.
-      </p>
-
-      <dl className="mt-4 divide-y divide-line/70">
-        {rows.map((row) => (
-          <div key={row.key} className="flex flex-col gap-1 py-3 sm:flex-row sm:gap-4">
-            <dt className="w-44 shrink-0 text-xs font-semibold uppercase tracking-wide text-muted">
-              {row.label}
-            </dt>
-            <dd className="break-words text-sm text-parchment">{row.value}</dd>
-          </div>
-        ))}
-      </dl>
-
-      <WalletMethods methods={info.methods} />
-
-      {info.extensions && info.extensions.length > 0 ? (
-        <div className="mt-5">
-          <h3 className="text-sm font-semibold text-parchment">Reported extensions</h3>
-          <ul className="mt-2 flex flex-wrap gap-2" aria-label="Reported wallet extensions">
-            {info.extensions.map((extension) => (
-              <li
-                key={extension}
-                className="rounded-full border border-line bg-ink px-3 py-1 text-xs text-parchment"
-              >
-                {extension}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-    </section>
-  )
+/**
+ * The connection state the account dashboard reports.
+ *
+ * A connection that is still being established is not yet a connection, so it is reported as
+ * disconnected rather than as connected.
+ */
+function toAccountConnectionState(kind: StatusKind): AccountConnectionState {
+  if (kind === 'connected') return 'connected'
+  if (kind === 'error') return 'error'
+  return 'disconnected'
 }
 
 export function Wallet() {
@@ -117,6 +76,7 @@ export function Wallet() {
   const [uri, setUri] = useState('')
   const [status, setStatus] = useState<WalletStatus>(IDLE_STATUS)
   const [info, setInfo] = useState<SanitizedGetInfoResponse | null>(null)
+  const [infoRefreshedAt, setInfoRefreshedAt] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
   const requestId = useRef(0)
 
@@ -156,6 +116,7 @@ export function Wallet() {
     session.disconnect()
     setUri('')
     setInfo(null)
+    setInfoRefreshedAt(null)
     setBusy(false)
     setStatus({
       kind: 'disconnected',
@@ -180,6 +141,7 @@ export function Wallet() {
     const attempt = ++requestId.current
     setUri('')
     setInfo(null)
+    setInfoRefreshedAt(null)
     setBusy(true)
     setStatus({
       kind: 'connecting',
@@ -190,11 +152,13 @@ export function Wallet() {
       const result = await session.connect(raw)
       if (attempt !== requestId.current || result.status === 'stale') return
 
+      const refreshedAt = Date.now()
       setInfo(result.info)
+      setInfoRefreshedAt(refreshedAt)
       setBusy(false)
       setStatus({
         kind: 'connected',
-        message: `Your wallet answered get_info at ${new Date().toLocaleTimeString()}. The fields below are the wallet-reported values.`,
+        message: `Your wallet answered get_info at ${new Date(refreshedAt).toLocaleTimeString()}. The account dashboard below shows the wallet-reported values.`,
       })
     } catch (error) {
       if (attempt !== requestId.current) return
@@ -220,9 +184,18 @@ export function Wallet() {
           The wallet&apos;s generated connection URI determines which relay is used.
         </p>
         <p className="mt-3 text-sm leading-6 text-muted">
-          This page currently requests only <code>get_info</code>. It does not create invoices, make
-          payments, query a balance, or perform transactions. Wallet connection is optional: courses,
-          lessons, quizzes, the playground, and the AI Tutor remain available without it.
+          This page calls <code>get_info</code> when you connect. The account dashboard below
+          calls <code>get_info</code>, <code>get_balance</code>, and <code>list_transactions</code>{' '}
+          only when you press the matching button; it never polls and never runs on its own. The
+          practice section below calls <code>pay_invoice</code>, <code>make_invoice</code>, and{' '}
+          <code>lookup_invoice</code> only when you ask for a payment or an invoice. Wallet
+          connection is optional: courses, lessons, quizzes, the playground, and the AI Tutor
+          remain available without it.
+        </p>
+        <p className="mt-3 text-sm leading-6 text-muted">
+          The academy does not create an invoice or send a payment on its own. Every wallet request
+          below is an action you start and approve, and the wallet remains the authority for
+          anything it authorizes.
         </p>
       </header>
 
@@ -459,7 +432,34 @@ export function Wallet() {
         </p>
       </section>
 
-      {info ? <WalletInfo info={info} /> : null}
+      <WalletDashboard
+        key={info ? 'account-dashboard-connected' : 'account-dashboard-disconnected'}
+        methods={info?.methods ?? []}
+        info={info}
+        infoRefreshedAt={infoRefreshedAt}
+        connection={toAccountConnectionState(status.kind)}
+        requester={info ? session : null}
+        onInfoRefreshed={(refreshed, at) => {
+          setInfo(refreshed)
+          setInfoRefreshedAt(at)
+        }}
+      />
+
+      <PaymentPanel
+        key={info ? 'payment-panel-connected' : 'payment-panel-disconnected'}
+        methods={info?.methods ?? []}
+        requester={info ? session : null}
+        maxAmountMsat={PRACTICE_MAX_AMOUNT_SATS * 1000}
+      />
+
+      <ReceivePanel
+        key={info ? 'receive-panel-connected' : 'receive-panel-disconnected'}
+        methods={info?.methods ?? []}
+        requester={info ? session : null}
+        defaultAmountSats={PRACTICE_DEFAULT_AMOUNT_SATS}
+        maxAmountSats={PRACTICE_MAX_AMOUNT_SATS}
+        expirySeconds={PRACTICE_INVOICE_EXPIRY_SECONDS}
+      />
 
       <section aria-labelledby="safety-heading" className="mt-8 rounded-lg border border-line bg-surface p-5">
         <h2 id="safety-heading" className="text-lg font-semibold text-parchment">

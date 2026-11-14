@@ -54,13 +54,24 @@ test('the page distinguishes the method used from methods merely reported by the
   assert.match(html, /Requests payment of an invoice\./)
   assert.match(html, /custom_method/)
   assert.match(html, /These additional methods are capabilities reported by the connected wallet\./)
-  assert.match(html, /The Academy has not called or tested those additional methods\./)
+  assert.match(html, /The Academy has not verified that the wallet actually supports them\./)
   assert.match(html, /Displaying a method does not mean the Academy supports that operation\./)
   assert.match(
     html,
-    /This page does not request payments, create invoices, request balances, or retrieve transaction history\./,
+    /requests a balance or a transaction history only when you press\s+the matching button\./,
   )
-  assert.equal(html.includes('make_invoice'), false, 'Only reported methods are listed')
+  assert.match(html, /It never polls and never runs on its own\./)
+  // The list itself may only contain methods the wallet actually reported. Prose elsewhere on
+  // the page may name methods the wallet did not report.
+  const reportedList = html.match(
+    /<ul[^>]*aria-label="Methods reported by the connected wallet"[^>]*>[\s\S]*?<\/ul>/,
+  )
+  assert.ok(reportedList, 'the reported methods list should render')
+  assert.equal(
+    reportedList[0].includes('make_invoice'),
+    false,
+    'Only reported methods are listed',
+  )
 })
 
 test('reported method names render safely and empty or missing lists are graceful', () => {
